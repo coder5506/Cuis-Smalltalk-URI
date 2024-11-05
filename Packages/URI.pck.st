@@ -1,6 +1,6 @@
-'From Cuis7.1 [latest update: #6792] on 3 November 2024 at 2:27:33 pm'!
+'From Cuis7.1 [latest update: #6792] on 5 November 2024 at 4:58:46 am'!
 'Description '!
-!provides: 'URI' 1 18!
+!provides: 'URI' 1 2!
 SystemOrganization addCategory: #URI!
 SystemOrganization addCategory: #'URI-Public'!
 SystemOrganization addCategory: #'URI-Tests'!
@@ -14,6 +14,16 @@ OrderedCollection subclass: #MultiDictionary
 	category: 'URI-Public'!
 !classDefinition: 'MultiDictionary class' category: #'URI-Public'!
 MultiDictionary class
+	instanceVariableNames: ''!
+
+!classDefinition: #QueryDictionary category: #'URI-Public'!
+MultiDictionary subclass: #QueryDictionary
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'URI-Public'!
+!classDefinition: 'QueryDictionary class' category: #'URI-Public'!
+QueryDictionary class
 	instanceVariableNames: ''!
 
 !classDefinition: #URIParseError category: #'URI-Public'!
@@ -54,36 +64,6 @@ TestCase subclass: #TestURIPath
 	category: 'URI-Tests'!
 !classDefinition: 'TestURIPath class' category: #'URI-Tests'!
 TestURIPath class
-	instanceVariableNames: ''!
-
-!classDefinition: #IPAddress category: #'URI-Public'!
-Object subclass: #IPAddress
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'URI-Public'!
-!classDefinition: 'IPAddress class' category: #'URI-Public'!
-IPAddress class
-	instanceVariableNames: ''!
-
-!classDefinition: #IPv4Address category: #'URI-Public'!
-IPAddress subclass: #IPv4Address
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'URI-Public'!
-!classDefinition: 'IPv4Address class' category: #'URI-Public'!
-IPv4Address class
-	instanceVariableNames: ''!
-
-!classDefinition: #IPv6Address category: #'URI-Public'!
-IPAddress subclass: #IPv6Address
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'URI-Public'!
-!classDefinition: 'IPv6Address class' category: #'URI-Public'!
-IPv6Address class
 	instanceVariableNames: ''!
 
 !classDefinition: #RecursiveDescentParser category: #'URI-Public'!
@@ -155,15 +135,6 @@ I am a dictionary that allows multiple values for a key.  I am meant to be used 
 To support my tasks, I also track order of key insertion.
 !
 
-!IPAddress commentStamp: '<historical>' prior: 0!
-Placeholder.  Not yet implemented.!
-
-!IPv4Address commentStamp: '<historical>' prior: 0!
-Placeholder.  Not yet implemented.!
-
-!IPv6Address commentStamp: '<historical>' prior: 0!
-Placeholder.  Not yet implemented.!
-
 !PercentEncoding commentStamp: '<historical>' prior: 0!
 Reference: https://datatracker.ietf.org/doc/html/rfc3986#section-2.1!
 
@@ -173,13 +144,57 @@ Reference: https://datatracker.ietf.org/doc/html/rfc3986#section-3.2!
 !URIPath commentStamp: '<historical>' prior: 0!
 I am the path component of an RFC3986 URI.!
 
-!MultiDictionary methodsFor: 'accessing' stamp: 'ess 11/3/2024 13:25:28'!
-at: newKey replacingKey: oldKey put: anObject
-	"newKey will be stored in the position where oldKey was."! !
+!MultiDictionary methodsFor: 'accessing' stamp: 'ess 11/3/2024 16:04:48'!
+allAt: aKey
 
-!MultiDictionary methodsFor: 'accessing' stamp: 'ess 11/3/2024 13:25:53'!
-atLast: key put: anObject
-	"key will be at the end, even if it was already there."! !
+	^ super collect: [ :each | each key = aKey ifTrue: [ each value ] ]! !
+
+!MultiDictionary methodsFor: 'accessing' stamp: 'ess 11/3/2024 16:05:02'!
+allAt: aKey ifAbsent: exceptionBlock
+
+	| result |
+	result := self allAt: aKey.
+	^ result isEmpty
+		ifFalse: [ result ]
+		ifTrue: [ exceptionBlock value ]! !
+
+!MultiDictionary methodsFor: 'accessing' stamp: 'ess 11/3/2024 16:05:31'!
+at: aKey
+
+	^ self
+		at: aKey
+		ifAbsent: [ nil ]! !
+
+!MultiDictionary methodsFor: 'accessing' stamp: 'ess 11/3/2024 16:05:43'!
+at: aKey ifAbsent: exceptionBlock
+
+	^ super
+		detect: [ :each | each key = aKey ]
+		ifFound: [ :item | item value ]
+		ifNone: exceptionBlock! !
+
+!MultiDictionary methodsFor: 'accessing' stamp: 'ess 11/3/2024 16:17:35'!
+at: aKey put: aValue
+
+	firstIndex to: lastIndex do:
+		[ :index | | each |
+		each := array at: index.
+		each key = aKey
+			ifTrue:
+				[ array
+					at: index
+					put: each key -> aValue.
+				^ aValue ] ].
+	
+	^ self
+		at: aKey
+		putNew: aValue! !
+
+!MultiDictionary methodsFor: 'accessing' stamp: 'ess 11/3/2024 16:17:42'!
+at: aKey putNew: aValue
+
+	super addLast: aKey -> aValue.
+	^ aValue! !
 
 !MultiDictionary methodsFor: 'enumerating' stamp: 'ess 11/3/2024 13:26:44'!
 associationsDo: aBlock
@@ -187,56 +202,94 @@ associationsDo: aBlock
 
 	super do: aBlock! !
 
-!MultiDictionary methodsFor: 'enumerating' stamp: 'ess 11/3/2024 14:24:03'!
+!MultiDictionary methodsFor: 'enumerating' stamp: 'ess 11/3/2024 16:21:53'!
 collect: aBlock 
 	"Evaluate aBlock with each of my values as the argument.  Collect the resulting values into a collection that is like me. Answer with the new collection."
 	
-	| newCollection |
-	newCollection := self species newWithRoomForMoreThan: self size.
-	self associationsDo: [ :each |
-		newCollection at: each key put: (aBlock value: each value) ].
-	^newCollection! !
+	^ super collect: [ :each | each key -> (aBlock value: each value) ]! !
 
 !MultiDictionary methodsFor: 'enumerating' stamp: 'ess 11/3/2024 13:27:23'!
 do: aBlock
 
 	super do: [:assoc | aBlock value: assoc value]! !
 
-!MultiDictionary methodsFor: 'enumerating' stamp: 'ess 11/3/2024 14:24:18'!
+!MultiDictionary methodsFor: 'enumerating' stamp: 'ess 11/3/2024 16:23:04'!
 keysAndValuesDo: aBlock
 
-	^self associationsDo:[:assoc|
-		aBlock value: assoc key value: assoc value].! !
+	^self associationsDo:
+			[ :each |
+			aBlock
+				value: each key
+				value: each value ].! !
 
-!MultiDictionary methodsFor: 'enumerating' stamp: 'ess 11/3/2024 13:27:47'!
+!MultiDictionary methodsFor: 'enumerating' stamp: 'ess 11/3/2024 16:22:25'!
 keysDo: aBlock 
 	"Evaluate aBlock for each of the receiver's keys."
 
-	self associationsDo: [:association | aBlock value: association key]! !
+	self associationsDo: [ :each | aBlock value: each key]! !
 
-!MultiDictionary methodsFor: 'enumerating' stamp: 'ess 11/3/2024 14:25:10'!
+!MultiDictionary methodsFor: 'enumerating' stamp: 'ess 11/3/2024 16:22:15'!
 reverseDo: aBlock
 	"Evaluate aBlock for each of the receiver's values in reverse order."
 
-	super reverseDo: [ :key |
-		aBlock value: (self at: key ifAbsent: nil) ]! !
+	super reverseDo: [ :each | aBlock value: each value]! !
 
-!MultiDictionary methodsFor: 'enumerating' stamp: 'ess 11/3/2024 14:24:39'!
+!MultiDictionary methodsFor: 'enumerating' stamp: 'ess 11/3/2024 16:21:46'!
 select: aBlock 
 	"Evaluate aBlock with each of my values as the argument.  Collect into a new  dictionary, only those associations for which aBlock evaluates to true."
+	
+	^ super select: [ :each | aBlock value: each value ]! !
 
-	| newCollection |
-	newCollection := self species new.
-	self associationsDo: 
-		[:each | 
-		(aBlock value: each value) ifTrue: [newCollection add: each]].
-	^newCollection! !
-
-!MultiDictionary methodsFor: 'enumerating' stamp: 'ess 11/3/2024 13:27:56'!
+!MultiDictionary methodsFor: 'enumerating' stamp: 'ess 11/3/2024 16:22:05'!
 valuesDo: aBlock 
 	"Evaluate aBlock for each of the receiver's keys."
 
-	self associationsDo: [:association | aBlock value: association value]! !
+	self associationsDo: [ :each | aBlock value: each value]! !
+
+!QueryDictionary methodsFor: 'converting' stamp: 'ess 11/4/2024 03:53:56'!
+asQueryString
+
+	^ String streamContents:
+				[ :out |
+				super
+					do: [ :each |
+						out nextPutAll: each key percentEncoded.
+						each value
+							ifNotNil:
+								[ out
+									nextPut: $=;
+									nextPutAll: each value percentEncoded ] ]		
+					separatedBy: [ out nextPut: $& ] ]! !
+
+!QueryDictionary methodsFor: 'private' stamp: 'ess 11/4/2024 03:53:43'!
+setQueryString: aString
+
+	(aString findTokens: '&')
+		do: [ :each | | separator key value |
+			separator := each indexOf: $=.
+			separator isZero
+				ifTrue:
+					[ key := each.
+					self
+						at: key percentDecoded
+						putNew: nil ]
+				ifFalse:
+					[ key := each
+							copyFrom: 1
+							to: separator - 1.
+					value := each
+							copyFrom: separator + 1
+							to: each size.
+					self
+						at: key percentDecoded
+						putNew: value percentDecoded ] ].
+	^ self! !
+
+!QueryDictionary class methodsFor: 'instance creation' stamp: 'ess 11/4/2024 03:54:30'!
+fromString: aString
+
+	^ self new
+		setQueryString: aString! !
 
 !TestPercentEncoding methodsFor: 'tests' stamp: 'ess 11/3/2024 08:50:31'!
 testEncoding1
@@ -277,9 +330,29 @@ testNormalization
 		assert: (PercentEncoding normalize: '%7bfoo%7d')
 		equals: '%7Bfoo%7D'! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 11/3/2024 09:19:43'!
+!TestURI methodsFor: 'tests' stamp: 'ess 11/5/2024 04:56:12'!
+skipExample3
+	"This test is broken because IPv6 parsing is not yet implemented."
+
+	| uri |
+	
+	uri := URI fromString: 'ldap://[2001:db8::7]/c=GB?objectClass?one'.
+	self
+		assert: uri scheme
+		equals: 'ldap'.
+	self
+		assert: uri host
+		equals: '[2001:db8::7]'.
+	self
+		assert: uri path asString
+		equals: 'c=GB'.
+	self
+		assert: uri query
+		equals: 'objectClass?one'! !
+
+!TestURI methodsFor: 'tests' stamp: 'ess 11/4/2024 05:50:00'!
 testExample2
-	"Reference: https://datatracker.ietf.org/doc/html/rfc3986"
+	"Reference: https://datatracker.ietf.org/doc/html/rfc3986#section-1.1.2"
 
 	| uri |
 	
@@ -773,14 +846,6 @@ initialize
 
 	shift := OrderedCollection new! !
 
-!RecursiveDescentParser methodsFor: 'initialization' stamp: 'ess 11/2/2024 03:14:10'!
-step
-	"Move to next character of input."
-
-	lookahead := input atEnd
-					ifFalse: [ input next ]
-					ifTrue: [ nil ]! !
-
 !RecursiveDescentParser methodsFor: 'parsing' stamp: 'ess 11/2/2024 04:20:43'!
 consume
 	"Update lookahead to the next character of the input, or nil.  Answer the old value of the lookahead."
@@ -802,6 +867,11 @@ match: expectedCharacter
 	self consume.
 	^ true! !
 
+!RecursiveDescentParser methodsFor: 'parsing' stamp: 'ess 11/4/2024 03:55:01'!
+next
+
+	^ input next! !
+
 !RecursiveDescentParser methodsFor: 'parsing' stamp: 'ess 11/2/2024 03:23:33'!
 parse
 
@@ -812,6 +882,14 @@ parse: aStringOrStream
 
 	self input: aStringOrStream.
 	^ self parse! !
+
+!RecursiveDescentParser methodsFor: 'parsing' stamp: 'ess 11/4/2024 03:55:09'!
+step
+	"Move to next character of input."
+
+	lookahead := input atEnd
+					ifFalse: [ self next ]
+					ifTrue: [ nil ]! !
 
 !RecursiveDescentParser methodsFor: 'testing' stamp: 'ess 11/2/2024 05:15:43'!
 atEnd
@@ -1453,8 +1531,9 @@ beNormal
 	query := query ifNotNil: [ PercentEncoding normalize: query ].
 	fragment := fragment ifNotNil: [ PercentEncoding normalize: fragment ]! !
 
-!URI methodsFor: 'converting' stamp: 'ess 11/3/2024 09:17:09'!
+!URI methodsFor: 'converting' stamp: 'ess 11/4/2024 05:52:34'!
 relativeTo: aBaseUri
+	"Reference: https://datatracker.ietf.org/doc/html/rfc3986#section-5.2"
 
 	| target |
 	
@@ -1492,8 +1571,9 @@ relativeTo: aBaseUri
 	^ target
 ! !
 
-!URI methodsFor: 'printing' stamp: 'ess 11/2/2024 16:06:12'!
+!URI methodsFor: 'printing' stamp: 'ess 11/4/2024 05:53:22'!
 printOn: aStream
+	"Reference: https://datatracker.ietf.org/doc/html/rfc3986#section-5.3"
 
 	scheme ifNotNil:
 		[ aStream
