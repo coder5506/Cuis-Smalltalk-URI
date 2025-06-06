@@ -1,6 +1,7 @@
-'From Cuis7.3 [latest update: #6971] on 8 January 2025 at 2:40:18 pm'!
+'From Cuis7.5 [latest update: #7262] on 6 June 2025 at 6:41:45 am'!
 'Description '!
-!provides: 'URI' 1 3!
+!provides: 'URI' 1 4!
+!requires: 'Cuis-Base' 75 7262 nil!
 SystemOrganization addCategory: #URI!
 SystemOrganization addCategory: #'URI-Public'!
 SystemOrganization addCategory: #'URI-Tests'!
@@ -26,16 +27,6 @@ MultiDictionary subclass: #QueryDictionary
 QueryDictionary class
 	instanceVariableNames: ''!
 
-!classDefinition: #ParseError category: #'URI-Public'!
-Error subclass: #ParseError
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'URI-Public'!
-!classDefinition: 'ParseError class' category: #'URI-Public'!
-ParseError class
-	instanceVariableNames: ''!
-
 !classDefinition: #URIParseError category: #'URI-Public'!
 Error subclass: #URIParseError
 	instanceVariableNames: ''
@@ -46,64 +37,44 @@ Error subclass: #URIParseError
 URIParseError class
 	instanceVariableNames: ''!
 
-!classDefinition: #TestPercentEncoding category: #'URI-Tests'!
-TestCase subclass: #TestPercentEncoding
+!classDefinition: #PercentEncodingTests category: #'URI-Tests'!
+TestCase subclass: #PercentEncodingTests
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'URI-Tests'!
-!classDefinition: 'TestPercentEncoding class' category: #'URI-Tests'!
-TestPercentEncoding class
+!classDefinition: 'PercentEncodingTests class' category: #'URI-Tests'!
+PercentEncodingTests class
 	instanceVariableNames: ''!
 
-!classDefinition: #TestURI category: #'URI-Tests'!
-TestCase subclass: #TestURI
+!classDefinition: #URIPathTests category: #'URI-Tests'!
+TestCase subclass: #URIPathTests
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'URI-Tests'!
-!classDefinition: 'TestURI class' category: #'URI-Tests'!
-TestURI class
+!classDefinition: 'URIPathTests class' category: #'URI-Tests'!
+URIPathTests class
 	instanceVariableNames: ''!
 
-!classDefinition: #TestURIPath category: #'URI-Tests'!
-TestCase subclass: #TestURIPath
+!classDefinition: #URITests category: #'URI-Tests'!
+TestCase subclass: #URITests
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'URI-Tests'!
-!classDefinition: 'TestURIPath class' category: #'URI-Tests'!
-TestURIPath class
+!classDefinition: 'URITests class' category: #'URI-Tests'!
+URITests class
 	instanceVariableNames: ''!
 
-!classDefinition: #RecursiveDescentParser category: #'URI-Public'!
-Object subclass: #RecursiveDescentParser
-	instanceVariableNames: 'input lookahead shift'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'URI-Public'!
-!classDefinition: 'RecursiveDescentParser class' category: #'URI-Public'!
-RecursiveDescentParser class
-	instanceVariableNames: ''!
-
-!classDefinition: #PercentEncoding category: #'URI-Public'!
-RecursiveDescentParser subclass: #PercentEncoding
+!classDefinition: #AboutURI category: #'URI-Public'!
+Object subclass: #AboutURI
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'URI-Public'!
-!classDefinition: 'PercentEncoding class' category: #'URI-Public'!
-PercentEncoding class
-	instanceVariableNames: ''!
-
-!classDefinition: #URIParser category: #'URI-Public'!
-RecursiveDescentParser subclass: #URIParser
-	instanceVariableNames: 'uri'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'URI-Public'!
-!classDefinition: 'URIParser class' category: #'URI-Public'!
-URIParser class
+!classDefinition: 'AboutURI class' category: #'URI-Public'!
+AboutURI class
 	instanceVariableNames: ''!
 
 !classDefinition: #URI category: #'URI-Public'!
@@ -126,6 +97,36 @@ Object subclass: #URIAuthority
 URIAuthority class
 	instanceVariableNames: ''!
 
+!classDefinition: #URIBaseParser category: #'URI-Public'!
+Object subclass: #URIBaseParser
+	instanceVariableNames: 'input lookahead shift'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'URI-Public'!
+!classDefinition: 'URIBaseParser class' category: #'URI-Public'!
+URIBaseParser class
+	instanceVariableNames: ''!
+
+!classDefinition: #PercentEncoding category: #'URI-Public'!
+URIBaseParser subclass: #PercentEncoding
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'URI-Public'!
+!classDefinition: 'PercentEncoding class' category: #'URI-Public'!
+PercentEncoding class
+	instanceVariableNames: ''!
+
+!classDefinition: #URIParser category: #'URI-Public'!
+URIBaseParser subclass: #URIParser
+	instanceVariableNames: 'uri'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'URI-Public'!
+!classDefinition: 'URIParser class' category: #'URI-Public'!
+URIParser class
+	instanceVariableNames: ''!
+
 !classDefinition: #URIPath category: #'URI-Public'!
 Object subclass: #URIPath
 	instanceVariableNames: 'segments isAbsolute'
@@ -145,81 +146,136 @@ I am a dictionary that allows multiple values for a key.  I am meant to be used 
 To support my tasks, I also track order of key insertion.
 !
 
-!ParseError commentStamp: 'ess 11/19/2024 09:53:48' prior: 0!
-I am a class for errors generated by BaseParser.!
+!URIParseError commentStamp: 'ess 4/3/2025 09:59:44' prior: 0!
+Class for errors generated by UriBaseParser or its subclasses PercentEncoding and UriParser.!
 
-!RecursiveDescentParser commentStamp: 'ess 11/19/2024 10:23:00' prior: 0!
-I am a utility for writing recursive-descent parsers.
+!AboutURI commentStamp: '<historical>' prior: 0!
+This package supports parsing, validating, normaling, and serializing Uniform Resource Identifiers (URIs) as described in [RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986).
 
-I have a single-token lookahead, but I also support backtracking.  I differ from Parser in not being specific to Smalltalk.
+See the Wikipedia article [Uniform Resource Identifier](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier) for more background and an alternative introduction (and pretty pictures).
 
-I am little more than a thin wrapper around a PositionableStream, i.e., my #lookahead equates to a stream's #peek and my #consume equates to a stream's #next.
+Note also the WHATWG [URL Living Standard](https://url.spec.whatwg.org/).  This is a different standard--URLs are not the same as URIs--but is occassionally helpful where the URI standard is unclear.!
 
-My main differenece from a stream is my #step method, which supports mapping one or more items from the underlying collection as a single token.  For many uses, this allows you to write parsers without having separate tokenization and parsing stages.  (This is sometimes convenient, and sometimes necessary.)  To do the same using only a stream can require distracting bookkeeping of the stream's underlying position.
+!URI commentStamp: 'ess 4/3/2025 11:31:41' prior: 0!
+A hierarchical Uniform Resource Identifier.
 
-To avoid that bookkeeping, I provide the methods #save and #restore to save and restore, respectively, the stream's position.  Saved positions can be nested.  To implement backtracking or multi-token lookahead, use #withSaveDo: to manage all this.
+A generic URI consists of five components organized by decreasing significance from left-to-right:
 
-I also provide a number of convenience methods that map directly to tests of the #lookahead token, but check for end-of-input, i.e., #isDigit is equivalent to `lookahead notNil and: [ lookahead isDigit ]`.!
+	URI = scheme ":" ["//" authority] path ["?" query] ["#" fragment]
 
-!PercentEncoding commentStamp: '<historical>' prior: 0!
-Reference: https://datatracker.ietf.org/doc/html/rfc3986#section-2.1!
+The authority component decomposes as:
 
-!URIAuthority commentStamp: '<historical>' prior: 0!
-Reference: https://datatracker.ietf.org/doc/html/rfc3986#section-3.2!
+	authority = [userinfo "@"] host [":" port]
 
-!URIPath commentStamp: '<historical>' prior: 0!
-I am the path component of an RFC3986 URI.!
+The userinfo component is schema-specific, but frequently consists of:
 
-!MultiDictionary methodsFor: 'accessing' stamp: 'ess 1/8/2025 14:23:57'!
+	userinfo = username [":" password]
+
+Viewed as a tree:
+
+	URI
+		scheme
+		authority
+			userinfo
+				username
+				password
+			host
+			port
+		path
+		query
+		fragment
+		
+This class provides both getters and setters for all components of a generic URI.!
+
+!URIAuthority commentStamp: 'ess 4/3/2025 10:06:12' prior: 0!
+An authority is responsible for the interpretation of the remainder of the URI (path, query, and fragment components).
+
+If present, an authority typically consists of a host (name or IP) and an optional port number.
+
+An authority can also be preceeded by an optional userinfo segment identifying the user and their authorization to the resource.  The old usage of userinfo to contain "username:password" is deprecated.
+
+See also [Authority](https://datatracker.ietf.org/doc/html/rfc3986#section-3.2).!
+
+!URIBaseParser commentStamp: 'ess 4/3/2025 08:45:52' prior: 0!
+This is a utility for writing simple recursive-descent parsers with backtracking.
+
+It provides functionality common to both PercentEncoding and UriParser.!
+
+!PercentEncoding commentStamp: 'ess 4/3/2025 08:54:13' prior: 0!
+The URI syntax uses certain reserved characters as delimiters between the components of the URI.
+
+If a reserved character is used within any component of a URI in such a way that it could be interpreted as a syntax character, that character must be represented instead with a percent ("%") encoded hexadecimal escape.
+
+This class both encodes and decodes percent-encoded strings.
+
+See also [Percent-Encoding](https://datatracker.ietf.org/doc/html/rfc3986#section-2.1).!
+
+!URIPath commentStamp: 'ess 4/3/2025 09:59:07' prior: 0!
+A path is a hierarchical identifier for a resource within the scope of the URI's scheme and authority.
+
+Paths can be:
+	- empty or missing,
+	- relative, requiring resolution relative to a base-URI,
+	- absolute, or
+	- both absolute and empty, i.e., "/".
+
+Non-empty paths contain a sequence of segments identifying the resource.!
+
+!MultiDictionary methodsFor: 'accessing' stamp: 'ess 4/3/2025 04:38:37'!
 allAt: aKey
 
 	| result |
 	result := OrderedCollection new.
-	self associationsDo: [:each | each key = aKey ifTrue: [result add: each value]].
-	^result! !
+	self associationsDo: [ :each |
+		each key = aKey ifTrue: [
+			result add: each value ] ].
+	^ result! !
 
-!MultiDictionary methodsFor: 'accessing' stamp: 'ess 1/8/2025 14:24:22'!
+!MultiDictionary methodsFor: 'accessing' stamp: 'ess 4/3/2025 04:38:43'!
 allAt: aKey ifAbsent: exceptionBlock
 
 	| result |
 	result := self allAt: aKey.
-	result isEmpty ifTrue: [^exceptionBlock value].
-	^result! !
+	result isEmpty ifTrue: [
+		^ exceptionBlock value ].
+	^ result! !
 
-!MultiDictionary methodsFor: 'accessing' stamp: 'ess 1/8/2025 11:38:26'!
+!MultiDictionary methodsFor: 'accessing' stamp: 'ess 4/3/2025 04:38:55'!
 at: aKey
 
-	^self
+	^ self
 		at: aKey
-		ifAbsent: [nil]! !
+		ifAbsent: [ nil ]! !
 
-!MultiDictionary methodsFor: 'accessing' stamp: 'ess 1/8/2025 14:25:15'!
+!MultiDictionary methodsFor: 'accessing' stamp: 'ess 4/3/2025 04:39:01'!
 at: aKey ifAbsent: exceptionBlock
 
-	self associationsDo: [:each | each key = aKey ifTrue: [^each value]].
-	^exceptionBlock value! !
+	self associationsDo: [ :each |
+		each key = aKey ifTrue: [
+			^ each value ] ].
+	^ exceptionBlock value! !
 
-!MultiDictionary methodsFor: 'accessing' stamp: 'ess 1/8/2025 11:39:17'!
+!MultiDictionary methodsFor: 'accessing' stamp: 'ess 4/3/2025 04:39:17'!
 at: aKey put: aValue
 
-	firstIndex to: lastIndex do:
-		[:index | | each |
+	firstIndex to: lastIndex do: [ :index |
+		| each |
 		each := array at: index.
 		each key = aKey
-			ifTrue:
-				[array
+			ifTrue: [
+				array
 					at: index
 					put: each key -> aValue.
-				^aValue]].
-	^self
+				^ aValue ] ].
+	^ self
 		at: aKey
 		putNew: aValue! !
 
-!MultiDictionary methodsFor: 'accessing' stamp: 'ess 1/8/2025 11:39:24'!
+!MultiDictionary methodsFor: 'accessing' stamp: 'ess 4/3/2025 04:39:23'!
 at: aKey putNew: aValue
 
 	super addLast: aKey -> aValue.
-	^aValue! !
+	^ aValue! !
 
 !MultiDictionary methodsFor: 'enumerating' stamp: 'ess 11/3/2024 13:26:44'!
 associationsDo: aBlock
@@ -227,113 +283,136 @@ associationsDo: aBlock
 
 	super do: aBlock! !
 
-!MultiDictionary methodsFor: 'enumerating' stamp: 'ess 1/8/2025 14:28:21'!
+!MultiDictionary methodsFor: 'enumerating' stamp: 'ess 4/3/2025 04:39:39'!
 collect: aBlock 
 	"Evaluate aBlock with each of my values as the argument.  Collect the resulting values into a collection that is like me. Answer with the new collection."
 	
 	| result |
 	result := self species new.
-	self associationsDo:
-		[:each |
+	self associationsDo: [ :each |
 		result
 			at: each key
-			putNew: (aBlock value: each value)].
-	^result! !
+			putNew: (aBlock value: each value) ].
+	^ result! !
 
 !MultiDictionary methodsFor: 'enumerating' stamp: 'ess 1/8/2025 14:27:16'!
 do: aBlock
 
 	self valuesDo: aBlock! !
 
-!MultiDictionary methodsFor: 'enumerating' stamp: 'ess 1/8/2025 11:40:02'!
+!MultiDictionary methodsFor: 'enumerating' stamp: 'ess 4/3/2025 04:39:47'!
 keysAndValuesDo: aBlock
 
-	^self associationsDo:
-		[:each |
+	^ self associationsDo: [ :each |
 		aBlock
 			value: each key
-			value: each value]! !
+			value: each value ]! !
 
-!MultiDictionary methodsFor: 'enumerating' stamp: 'ess 1/8/2025 11:40:08'!
+!MultiDictionary methodsFor: 'enumerating' stamp: 'ess 4/3/2025 03:35:57'!
 keysDo: aBlock 
 	"Evaluate aBlock for each of the receiver's keys."
 
-	self associationsDo: [:each | aBlock value: each key]! !
+	self associationsDo: [ :each |
+		aBlock value: each key ]! !
 
-!MultiDictionary methodsFor: 'enumerating' stamp: 'ess 1/8/2025 11:40:13'!
+!MultiDictionary methodsFor: 'enumerating' stamp: 'ess 4/3/2025 04:41:15'!
+reject: aBlock 
+
+	| result |
+	result := self species new.
+	self associationsDo: [ :each |
+		(aBlock value: each value) ifFalse: [
+			result
+				at: each key
+				putNew: each value ] ].
+	^ result! !
+
+!MultiDictionary methodsFor: 'enumerating' stamp: 'ess 4/3/2025 03:36:07'!
 reverseDo: aBlock
 	"Evaluate aBlock for each of the receiver's values in reverse order."
 
-	super reverseDo: [:each | aBlock value: each value]! !
+	super reverseDo: [ :each |
+		aBlock value: each value ]! !
 
-!MultiDictionary methodsFor: 'enumerating' stamp: 'ess 1/8/2025 14:29:30'!
+!MultiDictionary methodsFor: 'enumerating' stamp: 'ess 4/3/2025 04:39:59'!
 select: aBlock 
 	"Evaluate aBlock with each of my values as the argument.  Collect into a new  dictionary, only those associations for which aBlock evaluates to true."
 	
 	| result |
 	result := self species new.
-	self associationsDo:
-		[:each |
-		(aBlock value: each value) ifTrue:
-			[result
+	self associationsDo: [ :each |
+		(aBlock value: each value) ifTrue: [
+			result
 				at: each key
-				putNew: each value]].
-	^result! !
+				putNew: each value ] ].
+	^ result! !
 
-!MultiDictionary methodsFor: 'enumerating' stamp: 'ess 1/8/2025 11:40:27'!
+!MultiDictionary methodsFor: 'enumerating' stamp: 'ess 4/3/2025 03:36:36'!
 valuesDo: aBlock 
 	"Evaluate aBlock for each of the receiver's keys."
 
-	self associationsDo: [:each | aBlock value: each value]! !
+	self associationsDo: [ :each |
+		aBlock value: each value ]! !
 
-!MultiDictionary class methodsFor: 'instance creation' stamp: 'ess 1/8/2025 14:02:11'!
+!MultiDictionary methodsFor: 'testing' stamp: 'ess 4/3/2025 04:44:17'!
+is: aSymbol
+
+	^ aSymbol == #MultiDictionary or: [ super is: aSymbol ]! !
+
+!MultiDictionary class methodsFor: 'instance creation' stamp: 'ess 4/3/2025 04:58:14'!
 newFrom: aCollection
 
 	| result |
 	result := self new.
-	aCollection associationsDo:
-		[:each | | key value |
-		[key := each key.
-		value := each value]
+	aCollection associationsDo: [ :each |
+		| key value |
+		[
+			key := each key.
+			value := each value
+		]
 			on: Error
-			do: [key := each.
-				value := nil].
+			do: [
+				key := each.
+				value := nil ].
 		result
 			at: key
-			putNew: value].
-	^result! !
+			putNew: value ].
+	^ result! !
 
-!QueryDictionary methodsFor: 'converting' stamp: 'ess 1/8/2025 14:12:05'!
+!QueryDictionary methodsFor: 'converting' stamp: 'ess 4/3/2025 04:41:31'!
 asQueryString
 
 	| separator |
 	separator := ''.
-	^String streamContents:
-		[:stream |
-		self associationsDo:
-			[:each |
+	^ String streamContents: [ :stream |
+		self associationsDo: [ :each |
 			stream nextPutAll: separator.
 			separator := '&'.
 			stream nextPutAll: each key asString percentEncoded.
-			each value ifNotNil:
-				[stream
+			each value ifNotNil: [
+				stream
 					nextPut: $=;
-					nextPutAll: each value asString percentEncoded]]]! !
+					nextPutAll: each value asString percentEncoded ] ] ]! !
 
-!QueryDictionary methodsFor: 'private' stamp: 'ess 1/8/2025 11:43:32'!
+!QueryDictionary methodsFor: 'testing' stamp: 'ess 4/3/2025 04:44:26'!
+is: aSymbol
+
+	^ aSymbol == #QueryDictionary or: [ super is: aSymbol ]! !
+
+!QueryDictionary methodsFor: 'private' stamp: 'ess 4/3/2025 04:42:29'!
 setQueryString: aString
 
-	(aString findTokens: '&') do:
-		[:each | | separator key value |
+	(aString findTokens: '&') do: [ :each |
+		| separator key value |
 		separator := each indexOf: $=.
 		separator isZero
-			ifTrue:
-				[key := each.
+			ifTrue: [
+				key := each.
 				self
 					at: key percentDecoded
-					putNew: nil]
-			ifFalse:
-				[key := each
+					putNew: nil ]
+			ifFalse: [
+				key := each
 					copyFrom: 1
 					to: separator - 1.
 				value := each
@@ -341,16 +420,16 @@ setQueryString: aString
 					to: each size.
 				self
 					at: key percentDecoded
-					putNew: value percentDecoded]].
-	^self! !
+					putNew: value percentDecoded ] ].
+	^ self! !
 
-!QueryDictionary class methodsFor: 'instance creation' stamp: 'ess 1/8/2025 11:43:40'!
+!QueryDictionary class methodsFor: 'instance creation' stamp: 'ess 4/3/2025 04:35:40'!
 fromString: aString
 
-	^self new
+	^ self new
 		setQueryString: aString! !
 
-!TestPercentEncoding methodsFor: 'tests' stamp: 'ess 1/8/2025 13:36:48'!
+!PercentEncodingTests methodsFor: 'tests' stamp: 'ess 1/8/2025 13:36:48'!
 testEncoding1
 
 	| decoded encoded |
@@ -363,15 +442,12 @@ testEncoding1
 		assert: (PercentEncoding encode: decoded)
 		equals: encoded! !
 
-!TestPercentEncoding methodsFor: 'tests' stamp: 'ess 11/3/2024 08:50:53'!
+!PercentEncodingTests methodsFor: 'tests' stamp: 'ess 4/3/2025 04:26:07'!
 testEncoding2
 
 	| decoded encoded |
-
 	decoded := 'ほんとうにながいわけのわからないどめいんめいのらべるまだながくしないとたりない.ほんとうにながいわけのわからないどめいんめいのらべるまだながくしないとたりない.ほんとうにながいわけのわからないどめいんめいのらべるまだながくしないとたりない.w3.mag.keio.ac.jp'.
-
-	encoded := '%E3%81%BB%E3%82%93%E3%81%A8%E3%81%86%E3%81%AB%E3%81%AA%E3%81%8C%E3%81%84%E3%82%8F%E3%81%91%E3%81%AE%E3%82%8F%E3%81%8B%E3%82%89%E3%81%AA%E3%81%84%E3%81%A9%E3%82%81%E3%81%84%E3%82%93%E3%82%81%E3%81%84%E3%81%AE%E3%82%89%E3%81%B9%E3%82%8B%E3%81%BE%E3%81%A0%E3%81%AA%E3%81%8C%E3%81%8F%E3%81%97%E3%81%AA%E3%81%84%E3%81%A8%E3%81%9F%E3%82%8A%E3%81%AA%E3%81%84.%E3%81%BB%E3%82%93%E3%81%A8%E3%81%86%E3%81%AB%E3%81%AA%E3%81%8C%E3%81%84%E3%82%8F%E3%81%91%E3%81%AE%E3%82%8F%E3%81%8B%E3%82%89%E3%81%AA%E3%81%84%E3%81%A9%E3%82%81%E3%81%84%E3%82%93%E3%82%81%E3%81%84%E3%81%AE%E3%82%89%E3%81%B9%E3%82%8B%E3%81%BE%E3%81%A0%E3%81%AA%E3%81%8C%E3%81%8F%E3%81%97%E3%81%AA%E3%81%84%E3%81%A8%E3%81%9F%E3%82%8A%E3%81%AA%E3%81%84.%E3%81%BB%E3%82%93%E3%81%A8%E3%81%86%E3%81%AB%E3%81%AA%E3%81%8C%E3%81%84%E3%82%8F%E3%81%91%E3%81%AE%E3%82%8F%E3%81%8B%E3%82%89%E3%81%AA%E3%81%84%E3%81%A9%E3%82%81%E3%81%84%E3%82%93%E3%82%81%E3%81%84%E3%81%AE%E3%82%89%E3%81%B9%E3%82%8B%E3%81%BE%E3%81%A0%E3%81%AA%E3%81%8C%E3%81%8F%E3%81%97%E3%81%AA%E3%81%84%E3%81%A8%E3%81%9F%E3%82%8A%E3%81%AA%E3%81%84.w3.mag.keio.ac.jp'.
-	
+	encoded := '%E3%81%BB%E3%82%93%E3%81%A8%E3%81%86%E3%81%AB%E3%81%AA%E3%81%8C%E3%81%84%E3%82%8F%E3%81%91%E3%81%AE%E3%82%8F%E3%81%8B%E3%82%89%E3%81%AA%E3%81%84%E3%81%A9%E3%82%81%E3%81%84%E3%82%93%E3%82%81%E3%81%84%E3%81%AE%E3%82%89%E3%81%B9%E3%82%8B%E3%81%BE%E3%81%A0%E3%81%AA%E3%81%8C%E3%81%8F%E3%81%97%E3%81%AA%E3%81%84%E3%81%A8%E3%81%9F%E3%82%8A%E3%81%AA%E3%81%84.%E3%81%BB%E3%82%93%E3%81%A8%E3%81%86%E3%81%AB%E3%81%AA%E3%81%8C%E3%81%84%E3%82%8F%E3%81%91%E3%81%AE%E3%82%8F%E3%81%8B%E3%82%89%E3%81%AA%E3%81%84%E3%81%A9%E3%82%81%E3%81%84%E3%82%93%E3%82%81%E3%81%84%E3%81%AE%E3%82%89%E3%81%B9%E3%82%8B%E3%81%BE%E3%81%A0%E3%81%AA%E3%81%8C%E3%81%8F%E3%81%97%E3%81%AA%E3%81%84%E3%81%A8%E3%81%9F%E3%82%8A%E3%81%AA%E3%81%84.%E3%81%BB%E3%82%93%E3%81%A8%E3%81%86%E3%81%AB%E3%81%AA%E3%81%8C%E3%81%84%E3%82%8F%E3%81%91%E3%81%AE%E3%82%8F%E3%81%8B%E3%82%89%E3%81%AA%E3%81%84%E3%81%A9%E3%82%81%E3%81%84%E3%82%93%E3%82%81%E3%81%84%E3%81%AE%E3%82%89%E3%81%B9%E3%82%8B%E3%81%BE%E3%81%A0%E3%81%AA%E3%81%8C%E3%81%8F%E3%81%97%E3%81%AA%E3%81%84%E3%81%A8%E3%81%9F%E3%82%8A%E3%81%AA%E3%81%84.w3.mag.keio.ac.jp'.	
 	self
 		assert: (PercentEncoding decode: encoded)
 		equals: decoded.
@@ -379,7 +455,7 @@ testEncoding2
 		assert: (PercentEncoding encode: decoded)
 		equals: encoded! !
 
-!TestPercentEncoding methodsFor: 'tests' stamp: 'ess 11/3/2024 08:53:01'!
+!PercentEncodingTests methodsFor: 'tests' stamp: 'ess 11/3/2024 08:53:01'!
 testNormalization
 	"From https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2"
 
@@ -387,7 +463,99 @@ testNormalization
 		assert: (PercentEncoding normalize: '%7bfoo%7d')
 		equals: '%7Bfoo%7D'! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 13:37:14'!
+!URIPathTests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
+testAbormalExamples
+	"Reference: https://datatracker.ietf.org/doc/html/rfc3986#section-5.4.2"
+	
+	| baseUri |
+	baseUri := URI fromString: 'http://a/b/c/d;p?q'.
+	{
+		'../../../g' -> 'http://a/g' .
+		'../../../../g' -> 'http://a/g' .
+		'/./g' -> 'http://a/g' .
+		'/../g' -> 'http://a/g' .
+		'g.' -> 'http://a/b/c/g.' .
+		'.g' -> 'http://a/b/c/.g' .
+		'g..' -> 'http://a/b/c/g..' .
+		'..g' -> 'http://a/b/c/..g' .
+		'./../g' -> 'http://a/b/g' .
+		'./g/.' -> 'http://a/b/c/g/' .
+		'g/./h' -> 'http://a/b/c/g/h' .
+		'g/../h' -> 'http://a/b/c/h' .
+		'g;x=1/./y' -> 'http://a/b/c/g;x=1/y' .
+		'g;x=1/../y' -> 'http://a/b/c/y' .
+		'g?y/./x' -> 'http://a/b/c/g?y/./x' .
+		'g?y/../x' -> 'http://a/b/c/g?y/../x' .
+		'g#s/./x' -> 'http://a/b/c/g#s/./x' .
+		'g#s/../x' -> 'http://a/b/c/g#s/../x' .
+		'http:g' -> 'http:g'
+	} do: [ :each |
+		| relativeUri targetUri |
+		relativeUri := URI fromString: each key.
+		targetUri := relativeUri relativeTo: baseUri.
+		self
+			assert: targetUri asString
+			equals: each value ]! !
+
+!URIPathTests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
+testNormalExamples
+	"Reference: https://datatracker.ietf.org/doc/html/rfc3986#section-5.4.1"
+	
+	| baseUri |
+	baseUri := URI fromString: 'http://a/b/c/d;p?q'.
+	{
+		'g:h' -> 'g:h' .
+		'g' -> 'http://a/b/c/g' .
+		'./g' -> 'http://a/b/c/g' .
+		'g/' -> 'http://a/b/c/g/' .
+		'/g' -> 'http://a/g' .
+		'//g' -> 'http://g' .
+		'?y' -> 'http://a/b/c/d;p?y' .
+		'g?y' -> 'http://a/b/c/g?y' .
+		'#s' -> 'http://a/b/c/d;p?q#s' .
+		'g#s' -> 'http://a/b/c/g#s' .
+		'g?y#s' -> 'http://a/b/c/g?y#s' .
+		';x' -> 'http://a/b/c/;x' .
+		'g;x' -> 'http://a/b/c/g;x' .
+		'g;x?y#s' -> 'http://a/b/c/g;x?y#s' .
+		'' -> 'http://a/b/c/d;p?q' .
+		'.' -> 'http://a/b/c/' .
+		'./' -> 'http://a/b/c/' .
+		'..' -> 'http://a/b/' .
+		'../' -> 'http://a/b/' .
+		'../g' -> 'http://a/b/g' .
+		'../..' -> 'http://a/' .
+		'../../' -> 'http://a/' . 
+		'../../g' -> 'http://a/g'
+	} do: [ :each |
+		| relativeUri targetUri |
+		relativeUri := URI fromString: each key.
+		targetUri := relativeUri relativeTo: baseUri.
+		self
+			assert: targetUri asString
+			equals: each value ]! !
+
+!URIPathTests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:42'!
+testWithoutDotSegments1
+
+	| originalPath reducedPath |
+	originalPath := URIPath absolute: #('a' 'b' 'c' '.' '..' '..' 'g').
+	reducedPath := originalPath withoutDotSegments.	
+	self
+		assert: reducedPath asString
+		equals: '/a/g'! !
+
+!URIPathTests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:42'!
+testWithoutDotSegments2
+
+	| originalPath reducedPath |
+	originalPath := URIPath relative: #('mid' 'content=5' '..' '6').
+	reducedPath := originalPath withoutDotSegments.	
+	self
+		assert: reducedPath asString
+		equals: 'mid/6'! !
+
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 skipExample3
 	"This test is broken because IPv6 parsing is not yet implemented."
 
@@ -406,7 +574,7 @@ skipExample3
 		assert: uri query
 		equals: 'objectClass?one'! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 13:53:55'!
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 testConstruction
 
 	| uri |
@@ -424,7 +592,7 @@ testConstruction
 		equals: 'https://john:1234@www.domain.com:8080/folder/file?id=42&name=john.doe#row=1'
 ! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 13:37:20'!
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 testExample2
 	"Reference: https://datatracker.ietf.org/doc/html/rfc3986#section-1.1.2"
 
@@ -440,7 +608,7 @@ testExample2
 		assert: uri path asString
 		equals: '/rfc/rfc2396.txt'! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 13:37:26'!
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 testExample4
 
 	| uri |
@@ -452,7 +620,7 @@ testExample4
 		assert: uri path segments first
 		equals: 'John.Doe@example.com'! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 13:37:31'!
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 testExample5
 
 	| uri |
@@ -461,7 +629,7 @@ testExample5
 		assert: uri path segments first
 		equals: 'comp.infosystems.www.servers.unix'! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 13:37:36'!
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 testExample6
 
 	| uri |
@@ -470,7 +638,7 @@ testExample6
 		assert: uri path asString
 		equals: '+1-816-555-1212'! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 13:37:40'!
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 testExample7
 
 	| uri |
@@ -485,7 +653,7 @@ testExample7
 		assert: uri port
 		equals: 80! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 13:37:45'!
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 testExample8
 
 	| uri |
@@ -497,7 +665,7 @@ testExample8
 		assert: uri path asString
 		equals: 'oasis:names:specification:docbook:dtd:xml:4.1.2'! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 13:37:50'!
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 testExample9
 
 	| uri |
@@ -521,7 +689,7 @@ testExample9
 		assert: uri fragment
 		equals: 'nose'! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 13:37:55'!
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 testFileUri1
 	"From Cuis-Smalltalk-URI-Kernel"
 	
@@ -534,7 +702,7 @@ testFileUri1
 		assert: uri path asString
 		equals: '/path/to/file'! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 13:37:59'!
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 testFileUri2
 
 	| uri |
@@ -543,7 +711,7 @@ testFileUri2
 		assert: uri path asString
 		equals: '/path/to/file'! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 13:38:03'!
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 testFileUri3
 
 	| uri |
@@ -558,7 +726,7 @@ testFileUri3
 		assert: uri path asString
 		equals: '/path/to/file'! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 13:38:07'!
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 testFileUri4
 
 	| uri |
@@ -567,7 +735,7 @@ testFileUri4
 		assert: uri path segments last
 		equals: 'the%20file.txt'! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 13:38:10'!
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 testFileUri5
 
 	| uri |
@@ -579,7 +747,7 @@ testFileUri5
 		assert: uri path segments last
 		equals: 'the%20file.txt'! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 13:38:15'!
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 testFranz1
 	"From https://github.com/llibra/puri"
 
@@ -595,7 +763,7 @@ testFranz1
 		assert: uri fragment
 		equals: 'foo'! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 13:38:19'!
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 testFranz2
 
 	| uri |
@@ -607,7 +775,7 @@ testFranz2
 		assert: uri path segments last
 		equals: '%2ffoo'! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 13:38:27'!
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 testFromString1
 	"From Cuis-Smalltalk-URI-Kernel"
 
@@ -638,7 +806,7 @@ testFromString1
 		assert: uri fragment
 		equals: 'top'! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 13:38:32'!
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 testFromString2
 
 	| uri |
@@ -654,7 +822,7 @@ testFromString2
 		assert: uri query
 		equals: 'q'! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 13:38:39'!
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 testFromString8
 
 	| uri |
@@ -664,21 +832,18 @@ testFromString8
 		assert: uri path asString
 		equals: '../../../g'! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 13:38:48'!
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 testLongUri
 
-	| uri expectedHost uriString |
-	
+	| expectedHost uriString uri |
 	expectedHost := '%E3%81%BB%E3%82%93%E3%81%A8%E3%81%86%E3%81%AB%E3%81%AA%E3%81%8C%E3%81%84%E3%82%8F%E3%81%91%E3%81%AE%E3%82%8F%E3%81%8B%E3%82%89%E3%81%AA%E3%81%84%E3%81%A9%E3%82%81%E3%81%84%E3%82%93%E3%82%81%E3%81%84%E3%81%AE%E3%82%89%E3%81%B9%E3%82%8B%E3%81%BE%E3%81%A0%E3%81%AA%E3%81%8C%E3%81%8F%E3%81%97%E3%81%AA%E3%81%84%E3%81%A8%E3%81%9F%E3%82%8A%E3%81%AA%E3%81%84.%E3%81%BB%E3%82%93%E3%81%A8%E3%81%86%E3%81%AB%E3%81%AA%E3%81%8C%E3%81%84%E3%82%8F%E3%81%91%E3%81%AE%E3%82%8F%E3%81%8B%E3%82%89%E3%81%AA%E3%81%84%E3%81%A9%E3%82%81%E3%81%84%E3%82%93%E3%82%81%E3%81%84%E3%81%AE%E3%82%89%E3%81%B9%E3%82%8B%E3%81%BE%E3%81%A0%E3%81%AA%E3%81%8C%E3%81%8F%E3%81%97%E3%81%AA%E3%81%84%E3%81%A8%E3%81%9F%E3%82%8A%E3%81%AA%E3%81%84.%E3%81%BB%E3%82%93%E3%81%A8%E3%81%86%E3%81%AB%E3%81%AA%E3%81%8C%E3%81%84%E3%82%8F%E3%81%91%E3%81%AE%E3%82%8F%E3%81%8B%E3%82%89%E3%81%AA%E3%81%84%E3%81%A9%E3%82%81%E3%81%84%E3%82%93%E3%82%81%E3%81%84%E3%81%AE%E3%82%89%E3%81%B9%E3%82%8B%E3%81%BE%E3%81%A0%E3%81%AA%E3%81%8C%E3%81%8F%E3%81%97%E3%81%AA%E3%81%84%E3%81%A8%E3%81%9F%E3%82%8A%E3%81%AA%E3%81%84.w3.mag.keio.ac.jp'.
-
 	uriString := 'http://%E3%81%BB%E3%82%93%E3%81%A8%E3%81%86%E3%81%AB%E3%81%AA%E3%81%8C%E3%81%84%E3%82%8F%E3%81%91%E3%81%AE%E3%82%8F%E3%81%8B%E3%82%89%E3%81%AA%E3%81%84%E3%81%A9%E3%82%81%E3%81%84%E3%82%93%E3%82%81%E3%81%84%E3%81%AE%E3%82%89%E3%81%B9%E3%82%8B%E3%81%BE%E3%81%A0%E3%81%AA%E3%81%8C%E3%81%8F%E3%81%97%E3%81%AA%E3%81%84%E3%81%A8%E3%81%9F%E3%82%8A%E3%81%AA%E3%81%84.%E3%81%BB%E3%82%93%E3%81%A8%E3%81%86%E3%81%AB%E3%81%AA%E3%81%8C%E3%81%84%E3%82%8F%E3%81%91%E3%81%AE%E3%82%8F%E3%81%8B%E3%82%89%E3%81%AA%E3%81%84%E3%81%A9%E3%82%81%E3%81%84%E3%82%93%E3%82%81%E3%81%84%E3%81%AE%E3%82%89%E3%81%B9%E3%82%8B%E3%81%BE%E3%81%A0%E3%81%AA%E3%81%8C%E3%81%8F%E3%81%97%E3%81%AA%E3%81%84%E3%81%A8%E3%81%9F%E3%82%8A%E3%81%AA%E3%81%84.%E3%81%BB%E3%82%93%E3%81%A8%E3%81%86%E3%81%AB%E3%81%AA%E3%81%8C%E3%81%84%E3%82%8F%E3%81%91%E3%81%AE%E3%82%8F%E3%81%8B%E3%82%89%E3%81%AA%E3%81%84%E3%81%A9%E3%82%81%E3%81%84%E3%82%93%E3%82%81%E3%81%84%E3%81%AE%E3%82%89%E3%81%B9%E3%82%8B%E3%81%BE%E3%81%A0%E3%81%AA%E3%81%8C%E3%81%8F%E3%81%97%E3%81%AA%E3%81%84%E3%81%A8%E3%81%9F%E3%82%8A%E3%81%AA%E3%81%84.w3.mag.keio.ac.jp/'.
-	
 	uri := URI fromString: uriString.
 	self
 		assert: uri host
 		equals: expectedHost! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 14:14:53'!
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 testParsing
 
 	| uri |
@@ -692,7 +857,7 @@ testParsing
 	self assert: uri query equals: 'id=42&name=john.doe'.
 	self assert: uri fragment equals: 'row=1'! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 13:38:55'!
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 testPostgresUri1
 	"From Cuis-Smalltalk-URI-Kernel"
 
@@ -703,7 +868,7 @@ testPostgresUri1
 		equals: 'postgresql'.
 	self assert: uri path isNil! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 13:38:58'!
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 testPostgresUri2
 
 	| uri |
@@ -716,7 +881,7 @@ testPostgresUri2
 		equals: 'localhost'.
 	self assert: uri path isNil! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 13:39:03'!
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 testPostgresUri3
 
 	| uri |
@@ -729,7 +894,7 @@ testPostgresUri3
 		equals: 5433.
 	self assert: uri path isNil! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 13:39:06'!
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 testPostgresUri4
 
 	| uri |
@@ -738,7 +903,7 @@ testPostgresUri4
 		assert: uri path segments first
 		equals: 'mydb'! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 13:39:10'!
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 testPostgresUri5
 
 	| uri |
@@ -747,7 +912,7 @@ testPostgresUri5
 		assert: uri userinfo
 		equals: 'user'! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 13:39:15'!
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 testPostgresUri6
 
 	| uri |
@@ -756,7 +921,7 @@ testPostgresUri6
 		assert: uri userinfo
 		equals: 'user:secret'! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 13:39:19'!
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 testPostgresUri7
 
 	| uri |
@@ -771,7 +936,7 @@ testPostgresUri7
 		assert: uri query
 		equals: 'connect_timeout=10&application_name=myapp'! !
 
-!TestURI methodsFor: 'tests' stamp: 'ess 1/8/2025 14:30:07'!
+!URITests methodsFor: 'tests' stamp: 'ess 6/6/2025 06:38:06'!
 testQuery
 
 	| uri query |
@@ -780,791 +945,144 @@ testQuery
 	self assert: (query at: 'id') equals: '42'.
 	self assert: (query at: 'name') equals: 'john.doe'! !
 
-!TestURIPath methodsFor: 'tests' stamp: 'ess 1/8/2025 13:40:55'!
-testAbormalExamples
-	"Reference: https://datatracker.ietf.org/doc/html/rfc3986#section-5.4.2"
-	
-	| baseUri |
-	baseUri := URI fromString: 'http://a/b/c/d;p?q'.
-	{	'../../../g' -> 'http://a/g'.
-		'../../../../g' -> 'http://a/g'.
-		'/./g' -> 'http://a/g'.
-		'/../g' -> 'http://a/g'.
-		'g.' -> 'http://a/b/c/g.'.
-		'.g' -> 'http://a/b/c/.g'.
-		'g..' -> 'http://a/b/c/g..'.
-		'..g' -> 'http://a/b/c/..g'.
-		'./../g' -> 'http://a/b/g'.
-		'./g/.' -> 'http://a/b/c/g/'.
-		'g/./h' -> 'http://a/b/c/g/h'.
-		'g/../h' -> 'http://a/b/c/h'.
-		'g;x=1/./y' -> 'http://a/b/c/g;x=1/y'.
-		'g;x=1/../y' -> 'http://a/b/c/y'.
-		'g?y/./x' -> 'http://a/b/c/g?y/./x'.
-		'g?y/../x' -> 'http://a/b/c/g?y/../x'.
-		'g#s/./x' -> 'http://a/b/c/g#s/./x'.
-		'g#s/../x' -> 'http://a/b/c/g#s/../x'.
-		'http:g' -> 'http:g'
-	} do:
-		[:each | | relativeUri targetUri |
-		relativeUri := URI fromString: each key.
-		targetUri := relativeUri relativeTo: baseUri.
-		self
-			assert: targetUri asString
-			equals: each value]! !
-
-!TestURIPath methodsFor: 'tests' stamp: 'ess 1/8/2025 13:41:50'!
-testNormalExamples
-	"Reference: https://datatracker.ietf.org/doc/html/rfc3986#section-5.4.1"
-	
-	| baseUri |
-	baseUri := URI fromString: 'http://a/b/c/d;p?q'.
-	{	'g:h' -> 'g:h'.
-		'g' -> 'http://a/b/c/g'.
-		'./g' -> 'http://a/b/c/g'.
-		'g/' -> 'http://a/b/c/g/'.
-		'/g' -> 'http://a/g'.
-		'//g' -> 'http://g'.
-		'?y' -> 'http://a/b/c/d;p?y'.
-		'g?y' -> 'http://a/b/c/g?y'.
-		'#s' -> 'http://a/b/c/d;p?q#s'.
-		'g#s' -> 'http://a/b/c/g#s'.
-		'g?y#s' -> 'http://a/b/c/g?y#s'.
-		';x' -> 'http://a/b/c/;x'.
-		'g;x' -> 'http://a/b/c/g;x'.
-		'g;x?y#s' -> 'http://a/b/c/g;x?y#s'.
-		'' -> 'http://a/b/c/d;p?q'.
-		'.' -> 'http://a/b/c/'.
-		'./' -> 'http://a/b/c/'.
-		'..' -> 'http://a/b/'.
-		'../' -> 'http://a/b/'.
-		'../g' -> 'http://a/b/g'.
-		'../..' -> 'http://a/'.
-		'../../' -> 'http://a/'. 
-		'../../g' -> 'http://a/g'
-	} do:
-		[:each | | relativeUri targetUri |
-		relativeUri := URI fromString: each key.
-		targetUri := relativeUri relativeTo: baseUri.
-		self
-			assert: targetUri asString
-			equals: each value]! !
-
-!TestURIPath methodsFor: 'tests' stamp: 'ess 1/8/2025 13:41:57'!
-testWithoutDotSegments1
-
-	| originalPath reducedPath |
-	originalPath := URIPath absolute: #('a' 'b' 'c' '.' '..' '..' 'g').
-	reducedPath := originalPath withoutDotSegments.	
-	self
-		assert: reducedPath asString
-		equals: '/a/g'! !
-
-!TestURIPath methodsFor: 'tests' stamp: 'ess 1/8/2025 13:42:05'!
-testWithoutDotSegments2
-
-	| originalPath reducedPath |
-	originalPath := URIPath relative: #('mid' 'content=5' '..' '6').
-	reducedPath := originalPath withoutDotSegments.	
-	self
-		assert: reducedPath asString
-		equals: 'mid/6'! !
-
-!RecursiveDescentParser methodsFor: 'accessing' stamp: 'ess 11/3/2024 08:41:05'!
-input: aStringOrStream
-
-	input := aStringOrStream readStream.
-	self step! !
-
-!RecursiveDescentParser methodsFor: 'backtracking' stamp: 'ess 11/19/2024 10:17:08'!
-restore
-
-	| saved |
-	saved := self unsave.
-	input position: saved key.
-	lookahead := saved value! !
-
-!RecursiveDescentParser methodsFor: 'backtracking' stamp: 'ess 11/27/2024 10:53:02'!
-save
-
-	shift addLast: input position -> lookahead.
-	^input position! !
-
-!RecursiveDescentParser methodsFor: 'backtracking' stamp: 'ess 1/8/2025 11:16:05'!
-unsave
-
-	shift isEmpty ifTrue: [^self error: 'RecursiveDescentParser internal error: restore without save'].
-	^shift removeLast! !
-
-!RecursiveDescentParser methodsFor: 'backtracking' stamp: 'ess 11/27/2024 10:54:42'!
-withSaveDo: aUnaryBlock
-
-	| didRestore restore |
-	didRestore := false.
-	restore :=
-		[self restore.
-		didRestore := true].
-	self save.
-	^[aUnaryBlock value: restore] ensure:
-		[didRestore ifFalse: [self unsave]]! !
-
-!RecursiveDescentParser methodsFor: 'initialization' stamp: 'ess 11/1/2024 19:26:09'!
-initialize
-
-	shift := OrderedCollection new! !
-
-!RecursiveDescentParser methodsFor: 'initialization' stamp: 'ess 1/8/2025 11:15:39'!
-parseError: aMessageString
-
-	^ParseError signal: aMessageString! !
-
-!RecursiveDescentParser methodsFor: 'parsing' stamp: 'ess 1/8/2025 11:14:26'!
-consume
-	"Update lookahead to the next character of the input, or nil.  Answer the old value of the lookahead."
-
-	| la |
-	la := lookahead ifNil: [^self parseError: 'Unexpected end of input'].
-	self step.
-	^la! !
-
-!RecursiveDescentParser methodsFor: 'parsing' stamp: 'ess 11/28/2024 09:36:22'!
-expect: aCharacter
-
-	(self match: aCharacter) ifFalse:
-		[^self parseError: 'Expected ', aCharacter asString]! !
-
-!RecursiveDescentParser methodsFor: 'parsing' stamp: 'ess 1/8/2025 11:15:18'!
-lookahead
-
-	^lookahead! !
-
-!RecursiveDescentParser methodsFor: 'parsing' stamp: 'ess 11/28/2024 09:57:26'!
-match: aCharacter
-	"Consume the next character only if it matches aCharacter.  Answer true if the match succeeded."
-
-	| isMatch |
-	isMatch := lookahead == aCharacter.
-	isMatch ifTrue: [self consume].
-	^isMatch! !
-
-!RecursiveDescentParser methodsFor: 'parsing' stamp: 'ess 11/26/2024 15:43:36'!
-next
-
-	^input next! !
-
-!RecursiveDescentParser methodsFor: 'parsing' stamp: 'ess 1/8/2025 11:15:31'!
-parse
-
-	^self subclassResponsibility! !
-
-!RecursiveDescentParser methodsFor: 'parsing' stamp: 'ess 11/26/2024 07:41:44'!
-parse: aStringOrStream
-
-	self input: aStringOrStream.
-	^self parse! !
-
-!RecursiveDescentParser methodsFor: 'parsing' stamp: 'ess 11/27/2024 10:53:55'!
-step
-	"Move to next character of input."
-
-	lookahead := input atEnd
-		ifFalse: [self next]
-		ifTrue: [nil]! !
-
-!RecursiveDescentParser methodsFor: 'testing' stamp: 'ess 1/8/2025 11:13:04'!
-atEnd
-
-	^lookahead isNil! !
-
-!RecursiveDescentParser methodsFor: 'testing' stamp: 'ess 1/8/2025 11:13:13'!
-didSucceed
-	"We succeeded if we parsed all the input."
-
-	^self atEnd! !
-
-!RecursiveDescentParser methodsFor: 'testing' stamp: 'ess 1/8/2025 11:13:25'!
-isAscii
-
-	^lookahead notNil
-		and: [lookahead codePoint <= 127]! !
-
-!RecursiveDescentParser methodsFor: 'testing' stamp: 'ess 1/8/2025 11:13:37'!
-isDigit
-
-	^lookahead notNil
-		and: [lookahead isDigit]! !
-
-!RecursiveDescentParser class methodsFor: 'parsing' stamp: 'ess 11/26/2024 07:41:34'!
-parse: aStringOrStream
-
-	^self new parse: aStringOrStream! !
-
-!PercentEncoding methodsFor: 'parsing' stamp: 'ess 1/8/2025 11:17:39'!
-parse
-
-	^String streamContents:
-		[:stream | | characters |
-		[self atEnd] whileFalse:
-			[(lookahead = $%
-					and: [(characters := self readEncodedCharacters) notNil])
-				ifTrue: [stream nextPutAll: characters]
-				ifFalse: [stream nextPut: self consume]]]! !
-
-!PercentEncoding methodsFor: 'private' stamp: 'ess 1/8/2025 11:19:16'!
-readEncodedByte
-
-	| a b |
-	(self match: $%) ifFalse: [^nil].
-	a := self readHexDigit ifNil: [^nil].
-	b := self readHexDigit ifNil: [^nil].
-	^(a * 16) + b! !
-
-!PercentEncoding methodsFor: 'private' stamp: 'ess 1/8/2025 11:20:27'!
-readEncodedBytes
-
-	| bytes |
-	bytes := ByteArray streamContents:
-		[:stream | | byte |
-		[lookahead == $%
-				and: [(byte := self readEncodedByte) notNil]]
-			whileTrue:
-				[stream nextPut: byte]].
-	^bytes notEmpty
-		ifTrue: [bytes]
-		ifFalse: [nil]! !
-
-!PercentEncoding methodsFor: 'private' stamp: 'ess 1/8/2025 11:20:52'!
-readEncodedCharacters
-
-	^self withSaveDo:
-		[:reset |
-		[self readEncodedBytes
-				ifNotNil: [:octets | CharacterSequence fromUtf8Bytes: octets]]
-			on: Error
-			do: [reset value.
-				^nil]]! !
-
-!PercentEncoding methodsFor: 'private' stamp: 'ess 1/8/2025 11:21:31'!
-readHexDigit
-
-	| d |
-	d := lookahead ifNotNil: [self consume asUppercase digitValue].
-	^(d notNil and: [d between: 0 and: 15])
-		ifTrue: [d]
-		ifFalse: [nil]! !
-
-!PercentEncoding class methodsFor: 'constants' stamp: 'ess 11/2/2024 09:56:57'!
-unreservedCodepoints
-
-	^ `
-		'-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz~'
-			inject: (Array new: 127 withAll: false)
-			into:
-				[ :lookup :index |
-				lookup
-					at:index codePoint
-					put: true.
-				lookup ]
-	`! !
-
-!PercentEncoding class methodsFor: 'converting' stamp: 'ess 11/3/2024 09:07:18'!
-decode: aStringOrStream
-
-	^ self parse: aStringOrStream! !
-
-!PercentEncoding class methodsFor: 'converting' stamp: 'ess 11/3/2024 08:44:36'!
-encode: aStringOrBytes
-
-	| hexDigits bytes |
-
-	hexDigits := `
-		'0123456789ABCDEF' asByteArray
-	`.
-
-	bytes := aStringOrBytes isString
-				ifTrue: [ aStringOrBytes asUtf8Bytes ]
-				ifFalse: [ aStringOrBytes ].
-	^ (ByteArray streamContents:
-		[ :out |
-		bytes do:
-			[ :each |
-			(self isUnreservedCodepoint: each)
-				ifTrue: [ out nextPut: each ]
-				ifFalse:
-					[ out
-						nextPut: `$% codePoint`;
-						nextPut: (hexDigits at: each // 16 + 1);
-						nextPut: (hexDigits at: each \\ 16 + 1) ] ] ])
-			asString! !
-
-!PercentEncoding class methodsFor: 'converting' stamp: 'ess 11/3/2024 07:50:28'!
-normalize: anEncodedString
-
-	^ self encode: (self decode: anEncodedString)! !
-
-!PercentEncoding class methodsFor: 'testing' stamp: 'ess 11/3/2024 08:45:18'!
-isUnreserved: aCharacter
-	"Characters that are allowed in a URI but do not have a reserved purpose are called unreserved.  These include uppercase and lowercase letters, decimal digits, hyphen, period, underscore, and tilde.
-	
-	Reference: https://datatracker.ietf.org/doc/html/rfc3986#section-2.3"
-	
-	^ self isUnreservedCodepoint: aCharacter codePoint! !
-
-!PercentEncoding class methodsFor: 'testing' stamp: 'ess 11/2/2024 09:54:54'!
-isUnreservedCodepoint: aCodePoint
-
-	^ (aCodePoint
-		between: `$- codePoint`
-		and: `$~ codePoint`)
-			and: [ self unreservedCodepoints at: aCodePoint ]! !
-
-!URIParser methodsFor: 'constants' stamp: 'ess 1/8/2025 11:36:30'!
-subDelimiters
-
-	^'!!$&''()*+,;='! !
-
-!URIParser methodsFor: 'parsing' stamp: 'ess 1/8/2025 13:26:02'!
-parse
-
-	uri scheme: self readScheme.
-	self parseHierarchicalPart.
-	(self match: $?) ifTrue:
-		[uri query: self readQuery].
-	(self match: $#) ifTrue:
-		[uri fragment: self readFragment].
-	^self didSucceed
-		ifTrue: [uri]
-		ifFalse: [nil]! !
-
-!URIParser methodsFor: 'parsing' stamp: 'ess 1/8/2025 11:25:32'!
-parse: aString into: aUri
-
-	uri := aUri.
-	^self parse: aString! !
-
-!URIParser methodsFor: 'testing' stamp: 'ess 1/8/2025 13:23:55'!
-isAlphaNumeric
-
-	^self isAscii
-		and: [lookahead isAlphaNumeric]! !
-
-!URIParser methodsFor: 'testing' stamp: 'ess 1/8/2025 11:22:18'!
-isHostnameCharacter
-
-	^(self isUnreserved
-		or: [self isSubDelimiter])
-		or: [self isPercentEncoding]! !
-
-!URIParser methodsFor: 'testing' stamp: 'ess 1/8/2025 13:24:01'!
-isLetter
-
-	^self isAscii
-		and: [lookahead isLetter]! !
-
-!URIParser methodsFor: 'testing' stamp: 'ess 1/8/2025 11:22:48'!
-isNocolonPathCharacter
-
-	^(lookahead ~~ $:)
-		and: [self isPathCharacter]! !
-
-!URIParser methodsFor: 'testing' stamp: 'ess 1/8/2025 11:23:01'!
-isPathCharacter
-
-	^(self isUnreserved
-		or: [self isSubDelimiterOr: ':@'])
-		or: [self isPercentEncoding]! !
-
-!URIParser methodsFor: 'testing' stamp: 'ess 1/8/2025 13:24:52'!
-isPercentEncoding
-	"Answer true if lookahead is the start of a valid percent-encoded sequence."
-
-	^lookahead == $% and:
-		[self withSaveDo:
-			[:reset | | a b |
-			self consume.
-			a := lookahead ifNotNil: [self consume asUppercase digitValue].
-			b := lookahead ifNotNil: [self consume asUppercase digitValue].
-			reset value.
-			(a notNil and: [a between: 0 and: 15])
-				and: [b notNil and: [b between: 0 and: 15]]]]! !
-
-!URIParser methodsFor: 'testing' stamp: 'ess 1/8/2025 11:23:56'!
-isQueryCharacter
-
-	^self isPathCharacter
-		or: ['/?' includes: lookahead]! !
-
-!URIParser methodsFor: 'testing' stamp: 'ess 1/8/2025 11:24:04'!
-isSchemeCharacter
-
-	^self isAlphaNumeric
-		or: ['+-.' includes: lookahead]! !
-
-!URIParser methodsFor: 'testing' stamp: 'ess 1/8/2025 11:24:09'!
-isSchemeStartCharacter
-
-	^self isLetter! !
-
-!URIParser methodsFor: 'testing' stamp: 'ess 1/8/2025 13:25:21'!
-isSubDelimiter
-
-	^self subDelimiters includes: lookahead! !
-
-!URIParser methodsFor: 'testing' stamp: 'ess 1/8/2025 13:25:31'!
-isSubDelimiterOr: otherAllowedCharacters
-
-	^(self subDelimiters, otherAllowedCharacters) includes: lookahead! !
-
-!URIParser methodsFor: 'testing' stamp: 'ess 1/8/2025 11:24:26'!
-isUnreserved
-
-	^lookahead notNil
-		and: [PercentEncoding isUnreserved: lookahead]! !
-
-!URIParser methodsFor: 'testing' stamp: 'ess 1/8/2025 11:24:44'!
-isUserinfoCharacter
-
-	^((lookahead == $:
-		or: [self isUnreserved])
-		or: [self isSubDelimiter])
-		or: [self isPercentEncoding]! !
-
-!URIParser methodsFor: 'private-authority' stamp: 'ess 1/8/2025 13:26:22'!
-parseAuthority
-
-	uri userinfo: self readUserinfo.
-	uri host: self readHost.
-	((self match: $:) and: [self isDigit]) ifTrue:
-		[uri port: self readPort]! !
-
-!URIParser methodsFor: 'private-authority' stamp: 'ess 1/8/2025 11:26:33'!
-parseHierarchicalPart
-
-	uri path:
-		((self match: $/)
-			ifTrue:
-				[(self match: $/)
-					ifFalse: [self readAbsolutePath]
-					ifTrue:
-						[self parseAuthority.
-						(self match: $/)
-							ifTrue: [self readAbsolutePath]
-							ifFalse: [nil]]]
-			ifFalse:
-				[self isPathCharacter
-					ifFalse: [nil]
-					ifTrue:
-						[uri scheme
-						ifNotNil: [self readRelativePath]
-						ifNil: [self readNoschemePath]]])! !
-
-!URIParser methodsFor: 'private-authority' stamp: 'ess 1/8/2025 13:27:21'!
-readHost
-
-	lookahead == $[ ifTrue: [^self readIpLiteral].
-	^self isDigit
-		ifFalse: [self readHostname]
-		ifTrue: [self readIPv4 ifNil: [self readHostname]]! !
-
-!URIParser methodsFor: 'private-authority' stamp: 'ess 1/8/2025 11:29:03'!
-readHostname
-
-	^self readPercentEncodingSatisfying: [:la | self isHostnameCharacter]! !
-
-!URIParser methodsFor: 'private-authority' stamp: 'ess 1/8/2025 13:27:59'!
-readIPv4
-
-	^self withSaveDo:
-		[:reset |
-		(1 to: 4) collect:
-			[:each |
-			each > 1 ifTrue:
-				[(self match: $.) ifFalse:
-					[reset value.
-					^nil]].
-				self readOctet ifNil:
-					[reset value.
-					^nil]]]! !
-
-!URIParser methodsFor: 'private-authority' stamp: 'ess 1/8/2025 11:29:55'!
-readIpLiteral
-
-	"Not yet implemented."
-	^nil! !
-
-!URIParser methodsFor: 'private-authority' stamp: 'ess 1/8/2025 13:28:30'!
-readOctet
-
-	| octet |
-	self isDigit ifFalse: [ nil ].
-	octet := self consume digitValue.
-	self isDigit ifTrue: [octet := octet * 10 + self consume digitValue].
-	self isDigit ifTrue: [octet := octet * 10 + self consume digitValue].
-	(octet between: 0 and: 255) ifFalse: [^nil].
-	^octet! !
-
-!URIParser methodsFor: 'private-authority' stamp: 'ess 1/8/2025 13:29:15'!
-readPort
-
-	| port |
-	port := 0.
-	[self isDigit] whileTrue:
-		[port := port * 10 + self consume digitValue].
-	(port between: 0 and: 65536) ifFalse: [^nil].
-	^port! !
-
-!URIParser methodsFor: 'private-miscellaneous' stamp: 'ess 1/8/2025 11:28:24'!
-readFragment
-
-	"Fragments accept the same characters as queries."
-	^self readQuery! !
-
-!URIParser methodsFor: 'private-miscellaneous' stamp: 'ess 1/8/2025 13:28:49'!
-readPercentEncodingSatisfying: aBlock
-
-	^String streamContents:
-		[:stream |
-		[aBlock value: lookahead] whileTrue:
-			[(lookahead == $% and: [self isPercentEncoding])
-				ifFalse: [stream nextPut: self consume]
-				ifTrue: [3 timesRepeat: [stream nextPut: self consume]]]]! !
-
-!URIParser methodsFor: 'private-miscellaneous' stamp: 'ess 1/8/2025 11:34:52'!
-readQuery
-
-	^self readPercentEncodingSatisfying: [:la | self isQueryCharacter]! !
-
-!URIParser methodsFor: 'private-miscellaneous' stamp: 'ess 1/8/2025 13:29:42'!
-readScheme
-
-	self isSchemeStartCharacter ifFalse: [^nil].
-	^self withSaveDo:
-		[:reset | | scheme |
-		scheme := String streamContents:
-			[:stream |
-			[self isSchemeCharacter] whileTrue:
-				[stream nextPut: self consume]].
-		(self match: $:)
-			ifTrue: [scheme]
-			ifFalse:
-				[reset value.
-				nil]]! !
-
-!URIParser methodsFor: 'private-path' stamp: 'ess 1/8/2025 13:30:54'!
-readAbsolutePath
-
-	| firstSegment |
-	firstSegment := self readPathSegment.
-	firstSegment isEmpty ifTrue: [^URIPath root].
-	^URIPath absolute: (self readPathSegmentsAfter: firstSegment)! !
-
-!URIParser methodsFor: 'private-path' stamp: 'ess 1/8/2025 13:08:16'!
-readNocolonPathSegment
-
-	| segment |
-	segment := self readPercentEncodingSatisfying: [:la | self isNocolonPathCharacter].
-	segment isEmpty ifTrue: [URIParseError signal: 'Expected non-empty path segment'].
-	^segment! !
-
-!URIParser methodsFor: 'private-path' stamp: 'ess 1/8/2025 13:08:25'!
-readNonemptyPathSegment
-
-	self isPathCharacter ifFalse: [URIParseError signal: 'Expected non-empty path segment'].
-	^self readPathSegment! !
-
-!URIParser methodsFor: 'private-path' stamp: 'ess 1/8/2025 11:30:37'!
-readNoschemePath
-
-	^self readRelativePathAfter: self readNocolonPathSegment! !
-
-!URIParser methodsFor: 'private-path' stamp: 'ess 1/8/2025 11:31:15'!
-readPathSegment
-	"May be empty."
-	
-	^self readPercentEncodingSatisfying: [:la | self isPathCharacter]! !
-
-!URIParser methodsFor: 'private-path' stamp: 'ess 1/8/2025 11:31:38'!
-readPathSegments
-
-	| segments |
-	segments := OrderedCollection with: self readPathSegment.
-	[self match: $/] whileTrue:
-		[segments add: self readPathSegment].
-	^segments! !
-
-!URIParser methodsFor: 'private-path' stamp: 'ess 1/8/2025 11:32:00'!
-readPathSegmentsAfter: firstSegment
-
-	| segments |
-	segments := OrderedCollection with: firstSegment.
-	(self match: $/) ifTrue:
-		[segments addAll: self readPathSegments].
-	^segments! !
-
-!URIParser methodsFor: 'private-path' stamp: 'ess 1/8/2025 11:34:58'!
-readRelativePath
-
-	^self readRelativePathAfter: self readNonemptyPathSegment! !
-
-!URIParser methodsFor: 'private-path' stamp: 'ess 1/8/2025 13:29:25'!
-readRelativePathAfter: firstSegment
-
-	^URIPath relative: (self readPathSegmentsAfter: firstSegment)! !
-
-!URIParser methodsFor: 'private-path' stamp: 'ess 1/8/2025 13:29:52'!
-readUserinfo
-
-	^ self withSaveDo:
-		[:reset | | userinfo |
-		userinfo := self readPercentEncodingSatisfying: [:la | self isUserinfoCharacter].
-		(self match: $@)
-			ifTrue: [userinfo]
-			ifFalse:
-				[reset value.
-				nil]]! !
-
-!URIParser class methodsFor: 'parsing' stamp: 'ess 1/8/2025 13:23:26'!
-parse: aString into: aUri
-
-	^self new
-		parse: aString
-		into: aUri! !
-
-!URI methodsFor: 'accessing' stamp: 'ess 1/8/2025 13:14:42'!
+!URI methodsFor: 'accessing' stamp: 'ess 4/3/2025 04:20:27'!
 authority
 
-	^authority! !
+	^ authority! !
 
 !URI methodsFor: 'accessing' stamp: 'ess 1/8/2025 13:14:51'!
 authority: aUriAuthority
 
 	authority := aUriAuthority! !
 
-!URI methodsFor: 'accessing' stamp: 'ess 1/8/2025 13:15:26'!
+!URI methodsFor: 'accessing' stamp: 'ess 4/3/2025 04:20:34'!
 fragment
 
-	^fragment! !
+	^ fragment! !
 
 !URI methodsFor: 'accessing' stamp: 'ess 1/8/2025 13:15:31'!
 fragment: aString
 
 	fragment := aString! !
 
-!URI methodsFor: 'accessing' stamp: 'ess 1/8/2025 13:15:49'!
+!URI methodsFor: 'accessing' stamp: 'ess 4/3/2025 04:20:47'!
 host
 
-	^authority ifNotNil: [authority host]! !
+	^ authority ifNotNil: [ authority host ]! !
 
 !URI methodsFor: 'accessing' stamp: 'ess 1/8/2025 13:21:41'!
 host: anObject
 
 	self ensureAuthority host: anObject! !
 
-!URI methodsFor: 'accessing' stamp: 'ess 1/8/2025 13:16:34'!
+!URI methodsFor: 'accessing' stamp: 'ess 4/3/2025 04:21:03'!
 password
 
-	^authority ifNotNil: [authority password]! !
+	^ authority ifNotNil: [ authority password ]! !
 
-!URI methodsFor: 'accessing' stamp: 'ess 1/8/2025 13:16:39'!
+!URI methodsFor: 'accessing' stamp: 'ess 4/3/2025 04:21:08'!
 path
 
-	^path! !
+	^ path! !
 
 !URI methodsFor: 'accessing' stamp: 'ess 1/8/2025 13:16:47'!
 path: aUriPath
 
 	path := aUriPath! !
 
-!URI methodsFor: 'accessing' stamp: 'ess 1/8/2025 13:16:57'!
+!URI methodsFor: 'accessing' stamp: 'ess 4/3/2025 04:21:20'!
 port
 
-	^authority ifNotNil: [authority port]! !
+	^ authority ifNotNil: [ authority port ]! !
 
 !URI methodsFor: 'accessing' stamp: 'ess 1/8/2025 13:22:08'!
 port: anInteger
 
 	self ensureAuthority port: anInteger! !
 
-!URI methodsFor: 'accessing' stamp: 'ess 1/8/2025 13:18:12'!
+!URI methodsFor: 'accessing' stamp: 'ess 4/3/2025 04:21:28'!
 query
 
-	^query! !
+	^ query! !
 
-!URI methodsFor: 'accessing' stamp: 'ess 1/8/2025 14:05:00'!
+!URI methodsFor: 'accessing' stamp: 'ess 4/3/2025 04:21:45'!
 query: anObject
 
 	| queryDictionary |
-	(anObject isNil or: [anObject isString]) ifTrue:
-		[query := anObject.
-		^self].
+	(anObject isNil or: [ anObject isString ]) ifTrue: [
+		query := anObject.
+		^ self].
 	queryDictionary := QueryDictionary newFrom: anObject.
 	query := queryDictionary asQueryString! !
 
-!URI methodsFor: 'accessing' stamp: 'ess 1/8/2025 14:15:45'!
+!URI methodsFor: 'accessing' stamp: 'ess 4/3/2025 04:21:56'!
 queryDictionary
 
-	^query ifNotNil: [QueryDictionary fromString: query]! !
+	^ query ifNotNil: [
+		QueryDictionary fromString: query ]! !
 
-!URI methodsFor: 'accessing' stamp: 'ess 1/8/2025 13:19:54'!
+!URI methodsFor: 'accessing' stamp: 'ess 4/3/2025 08:35:19'!
 scheme
+	"The scheme refers to a specification for assigning identifiers within that scheme."
+	"Officially registered (IANA) schemes include: file, ftp, http, https, mailto, tel, imap, and nntp."
 
-	^scheme! !
+	^ scheme! !
 
 !URI methodsFor: 'accessing' stamp: 'ess 1/8/2025 13:19:59'!
 scheme: aString
 
 	scheme := aString! !
 
-!URI methodsFor: 'accessing' stamp: 'ess 1/8/2025 13:20:11'!
+!URI methodsFor: 'accessing' stamp: 'ess 4/3/2025 04:22:10'!
 userinfo
 
-	^authority ifNotNil: [authority userinfo]! !
+	^ authority ifNotNil: [ authority userinfo ]! !
 
 !URI methodsFor: 'accessing' stamp: 'ess 1/8/2025 13:22:28'!
 userinfo: aString
 
 	self ensureAuthority userinfo: aString! !
 
-!URI methodsFor: 'accessing' stamp: 'ess 1/8/2025 13:20:35'!
+!URI methodsFor: 'accessing' stamp: 'ess 4/3/2025 04:22:22'!
 username
 
-	^authority ifNotNil: [authority username]! !
+	^ authority ifNotNil: [ authority username ]! !
 
-!URI methodsFor: 'comparing' stamp: 'ess 1/8/2025 13:14:14'!
-= anotherUri
+!URI methodsFor: 'comparing' stamp: 'ess 4/3/2025 05:00:17'!
+= aUri
 
-	self == anotherUri ifTrue: [^true].
-	(anotherUri is: #URI) ifFalse: [^false].
-	^((((scheme == anotherUri scheme)
-			and: [authority == anotherUri authority])
-			and: [path == anotherUri path])
-			and: [query == anotherUri query])
-			and: [fragment == anotherUri fragment]! !
+	self == aUri ifTrue: [ ^ true ].
+	self species == aUri species ifFalse: [ ^ false ].
+	^ ((((scheme = aUri scheme)
+		and: [ authority = aUri authority ])
+		and: [ path = aUri path ])
+		and: [ query = aUri query ])
+		and: [ fragment = aUri fragment ]! !
 
-!URI methodsFor: 'comparing' stamp: 'ess 1/8/2025 11:45:54'!
+!URI methodsFor: 'comparing' stamp: 'ess 4/3/2025 04:20:20'!
 hash
 
-	^{scheme. authority. path. query. fragment}
-		inject: self class hash
-		into: [:sum :each | sum bitXor: each hash]! !
+	^ {scheme. authority. path. query. fragment}
+		inject: self species hash
+		into: [ :sum :each | sum bitXor: each hash ]! !
 
-!URI methodsFor: 'converting' stamp: 'ess 1/8/2025 13:14:32'!
+!URI methodsFor: 'converting' stamp: 'ess 4/3/2025 04:17:16'!
 asNormal
 
-	^self copy
+	^ self copy
 		beNormal;
 		yourself! !
 
-!URI methodsFor: 'converting' stamp: 'ess 1/8/2025 13:15:20'!
+!URI methodsFor: 'converting' stamp: 'ess 4/3/2025 04:17:46'!
 beNormal
 
-	scheme := scheme ifNotNil: [scheme asLowercase].
-	authority := authority ifNotNil: [authority asNormal].
-	path := path ifNotNil: [path asNormal].
-	query := query ifNotNil: [PercentEncoding normalize: query].
-	fragment := fragment ifNotNil: [PercentEncoding normalize: fragment]! !
+	scheme := scheme ifNotNil: [ scheme asLowercase ].
+	authority := authority ifNotNil: [ authority asNormal ].
+	path := path ifNotNil: [ path asNormal ].
+	query := query ifNotNil: [ PercentEncoding normalize: query ].
+	fragment := fragment ifNotNil: [ PercentEncoding normalize: fragment ]! !
 
-!URI methodsFor: 'converting' stamp: 'ess 1/8/2025 13:19:49'!
+!URI methodsFor: 'converting' stamp: 'ess 4/3/2025 04:19:11'!
 relativeTo: aBaseUri
 	"Reference: https://datatracker.ietf.org/doc/html/rfc3986#section-5.2"
 
@@ -1572,333 +1090,988 @@ relativeTo: aBaseUri
 	target := self species new.
 	target fragment: fragment.
 
-	scheme ifNotNil:
-		[target
+	scheme ifNotNil: [
+		target
 			scheme: scheme;
 			authority: authority;
-			path: (path ifNotNil: [path withoutDotSegments]);
+			path: (path ifNotNil: [ path withoutDotSegments ]);
 			query: query.
-		^target].
+		^ target].
 	target scheme: aBaseUri scheme.
 
-	authority ifNotNil:
-		[target
+	authority ifNotNil: [
+		target
 			authority: authority;
-			path: (path ifNotNil: [path withoutDotSegments]);
+			path: (path ifNotNil: [ path withoutDotSegments ]);
 			query: query.
-		^target].	
+		^ target].
 	target authority: aBaseUri authority.
 
-	path ifNil:
-		[target
+	path ifNil: [
+		target
 			path: aBaseUri path;
-			query: (query ifNil: [aBaseUri query]).
-		^target].
+			query: (query ifNil: [ aBaseUri query ]).
+		^ target].
 	target query: query.
 
 	target path:
 		(path isAbsolute
-			ifTrue: [path withoutDotSegments]
-			ifFalse: [path relativeTo: aBaseUri path]).
-	^target! !
+			ifTrue: [ path withoutDotSegments ]
+			ifFalse: [ path relativeTo: aBaseUri path ]).
+	^ target! !
 
-!URI methodsFor: 'printing' stamp: 'ess 1/8/2025 13:17:56'!
+!URI methodsFor: 'printing' stamp: 'ess 4/3/2025 04:17:09'!
 printOn: aStream
 	"Reference: https://datatracker.ietf.org/doc/html/rfc3986#section-5.3"
 
-	scheme ifNotNil:
-		[aStream
+	scheme ifNotNil: [
+		aStream
 			nextPutAll: scheme;
-			nextPut: $:].
-	authority ifNotNil:
-		[aStream
+			nextPut: $: ].
+	authority ifNotNil: [
+		aStream
 			nextPutAll: '//';
-			nextPutAll: authority asString].
-	path ifNotNil:
-		[aStream nextPutAll: path asString].
-	query ifNotNil:
-		[aStream
+			nextPutAll: authority asString ].
+	path ifNotNil: [
+		aStream nextPutAll: path asString ].
+	query ifNotNil: [
+		aStream
 			nextPut: $?;
-			nextPutAll: query].
-	fragment ifNotNil:
-		[aStream
+			nextPutAll: query ].
+	fragment ifNotNil: [
+		aStream
 			nextPut: $#;
-			nextPutAll: fragment]! !
+			nextPutAll: fragment ]! !
 
-!URI methodsFor: 'testing' stamp: 'ess 1/8/2025 13:16:22'!
+!URI methodsFor: 'testing' stamp: 'ess 6/6/2025 06:38:06'!
 is: aSymbol
 
-	^aSymbol == #URI or: [super is: aSymbol]! !
+	^ aSymbol == #URI or: [ super is: aSymbol ]! !
 
-!URI methodsFor: 'private' stamp: 'ess 1/8/2025 13:21:12'!
+!URI methodsFor: 'private' stamp: 'ess 6/6/2025 06:38:15'!
 ensureAuthority
 
-	^authority ifNil: [authority := URIAuthority new]! !
+	^ authority ifNil: [
+		authority := URIAuthority new ]! !
 
-!URI class methodsFor: 'instance creation' stamp: 'ess 1/8/2025 13:23:05'!
+!URI class methodsFor: 'instance creation' stamp: 'ess 6/6/2025 06:38:29'!
 fromString: aString
 
-	^URIParser
+	^ URIParser
 		parse: aString
 		into: self new! !
 
-!URIAuthority methodsFor: 'accessing' stamp: 'ess 1/8/2025 13:10:51'!
+!URIAuthority methodsFor: 'accessing' stamp: 'ess 4/3/2025 10:07:42'!
 host
+	"Answer the hostname or IP address of the authority."
 
-	^host! !
+	^ host! !
 
 !URIAuthority methodsFor: 'accessing' stamp: 'ess 1/8/2025 13:10:58'!
 host: anObject
 
 	host := anObject! !
 
-!URIAuthority methodsFor: 'accessing' stamp: 'ess 1/8/2025 13:11:39'!
+!URIAuthority methodsFor: 'accessing' stamp: 'ess 4/3/2025 10:07:13'!
 password
+	"Answer the part of the userinfo string following the first colon (':'), if any."
 
-	^userinfo ifNotNil:
-		[| separator |
+	^ userinfo ifNotNil: [
+		| separator |
 		separator := userinfo indexOf: $:.
 		separator = 0
-			ifTrue: [nil]
-			ifFalse:
-				[userinfo
+			ifTrue: [ nil ]
+			ifFalse: [
+				userinfo
 					copyFrom: separator + 1
-					to: userinfo size]]! !
+					to: userinfo size ] ]! !
 
-!URIAuthority methodsFor: 'accessing' stamp: 'ess 1/8/2025 13:11:55'!
+!URIAuthority methodsFor: 'accessing' stamp: 'ess 4/3/2025 10:08:15'!
 port
+	"If present, an IP port number in the range 0..65536."
 
-	^port! !
+	^ port! !
 
 !URIAuthority methodsFor: 'accessing' stamp: 'ess 1/8/2025 13:12:04'!
 port: anInteger
 
 	port := anInteger! !
 
-!URIAuthority methodsFor: 'accessing' stamp: 'ess 1/8/2025 13:12:37'!
+!URIAuthority methodsFor: 'accessing' stamp: 'ess 4/3/2025 10:08:42'!
 userinfo
+	"Optional user identity and authorization."
 
-	^userinfo! !
+	^ userinfo! !
 
 !URIAuthority methodsFor: 'accessing' stamp: 'ess 1/8/2025 13:12:45'!
 userinfo: aString
 
 	userinfo := aString! !
 
-!URIAuthority methodsFor: 'accessing' stamp: 'ess 1/8/2025 13:13:07'!
+!URIAuthority methodsFor: 'accessing' stamp: 'ess 4/3/2025 10:06:56'!
 username
+	"Answer the part of the userinfo string preceeding the first colon (':'), if any."
 
-	^userinfo ifNotNil:
-		[| separator |
+	^ userinfo ifNotNil: [
+		| separator |
 		separator := userinfo indexOf: $:.
 		separator = 0
-			ifTrue: [nil]
-			ifFalse:
-				[userinfo
+			ifTrue: [ nil ]
+			ifFalse: [
+				userinfo
 					copyFrom: 1
-					to: separator - 1]]! !
+					to: separator - 1 ] ]! !
 
-!URIAuthority methodsFor: 'comparing' stamp: 'ess 1/8/2025 13:10:27'!
-= anotherUriAuthority
+!URIAuthority methodsFor: 'comparing' stamp: 'ess 4/3/2025 04:46:15'!
+= aUriAuthority
 
-	self == anotherUriAuthority ifTrue: [^true].
-	(anotherUriAuthority is: #URIAuthority) ifFalse: [^false].
-	^((userinfo = anotherUriAuthority userinfo)
-		and: [host = anotherUriAuthority host])
-		and: [port = anotherUriAuthority port]! !
+	self == aUriAuthority ifTrue: [ ^ true ].
+	self species == aUriAuthority species ifFalse: [ ^ false ].
+	^ ((userinfo = aUriAuthority userinfo)
+		and: [ host = aUriAuthority host ])
+		and: [ port = aUriAuthority port ]! !
 
-!URIAuthority methodsFor: 'comparing' stamp: 'ess 1/8/2025 13:09:38'!
+!URIAuthority methodsFor: 'comparing' stamp: 'ess 4/3/2025 04:14:38'!
 hash
 
-	^((self class hash
+	^ ((self species hash
 		bitXor: userinfo hash)
 		bitXor: host hash)
 		bitXor: port hash! !
 
-!URIAuthority methodsFor: 'converting' stamp: 'ess 1/8/2025 13:09:49'!
+!URIAuthority methodsFor: 'converting' stamp: 'ess 4/3/2025 04:13:26'!
 asNormal
 
-	^self copy
+	^ self copy
 		beNormal;
 		yourself! !
 
-!URIAuthority methodsFor: 'converting' stamp: 'ess 1/8/2025 13:10:12'!
+!URIAuthority methodsFor: 'converting' stamp: 'ess 4/3/2025 04:13:48'!
 beNormal
 
-	userinfo := userinfo ifNotNil: [PercentEncoding normalize: userinfo].
-	(host notNil and: [host isString]) ifTrue:
-		[host := host asLowercase]! !
+	userinfo := userinfo ifNotNil: [
+		PercentEncoding normalize: userinfo ].
+	(host notNil and: [ host isString ]) ifTrue: [
+		host := host asLowercase ]! !
 
-!URIAuthority methodsFor: 'printing' stamp: 'ess 1/8/2025 13:18:06'!
+!URIAuthority methodsFor: 'printing' stamp: 'ess 4/3/2025 04:13:18'!
 printOn: aStream
 
-	userinfo ifNotNil:
-		[aStream
+	userinfo ifNotNil: [
+		aStream
 			nextPutAll: userinfo;
-			nextPut: $@].
-	host ifNotNil:
-		[aStream nextPutAll: host].
-	port ifNotNil:
-		[aStream
+			nextPut: $@ ].
+	host ifNotNil: [
+		aStream nextPutAll: host ].
+	port ifNotNil: [
+		aStream
 			nextPut: $:;
-			print: port]! !
+			print: port ]! !
 
-!URIAuthority methodsFor: 'testing' stamp: 'ess 1/8/2025 13:11:10'!
+!URIAuthority methodsFor: 'testing' stamp: 'ess 6/6/2025 06:38:15'!
 is: aSymbol
 
-	^aSymbol == #URIAuthority or: [super is: aSymbol]! !
+	^ aSymbol == #URIAuthority or: [ super is: aSymbol ]! !
 
-!URIPath methodsFor: 'accessing' stamp: 'ess 1/8/2025 13:02:10'!
+!URIBaseParser methodsFor: 'accessing' stamp: 'ess 4/3/2025 05:03:31'!
+digitValue
+
+	^ self consume digitValue! !
+
+!URIBaseParser methodsFor: 'accessing' stamp: 'ess 11/3/2024 08:41:05'!
+input: aStringOrStream
+
+	input := aStringOrStream readStream.
+	self step! !
+
+!URIBaseParser methodsFor: 'accessing' stamp: 'ess 4/3/2025 10:20:34'!
+xDigitValue
+
+	| digitValue |
+	digitValue := self consume asUppercase digitValue.
+	^ (digitValue notNil and: [ digitValue between: 0 and: 15 ])
+		ifTrue: [ digitValue ]
+		ifFalse: [ nil ]! !
+
+!URIBaseParser methodsFor: 'backtracking' stamp: 'ess 11/19/2024 10:17:08'!
+restore
+
+	| saved |
+	saved := self unsave.
+	input position: saved key.
+	lookahead := saved value! !
+
+!URIBaseParser methodsFor: 'backtracking' stamp: 'ess 4/3/2025 04:48:22'!
+save
+
+	shift addLast: input position -> lookahead.
+	^ input position! !
+
+!URIBaseParser methodsFor: 'backtracking' stamp: 'ess 4/3/2025 04:48:43'!
+unsave
+
+	shift isEmpty ifTrue: [
+		^ self error: 'UriBaseParser internal error: restore without save' ].
+	^ shift removeLast! !
+
+!URIBaseParser methodsFor: 'backtracking' stamp: 'ess 4/3/2025 04:48:54'!
+withSaveDo: aUnaryBlock
+
+	| didRestore restore |
+	didRestore := false.
+	restore := [
+		self restore.
+		didRestore := true ].
+	self save.
+	^ [ aUnaryBlock value: restore ]
+		ensure: [
+			didRestore ifFalse: [
+				self unsave ] ]! !
+
+!URIBaseParser methodsFor: 'initialization' stamp: 'ess 11/1/2024 19:26:09'!
+initialize
+
+	shift := OrderedCollection new! !
+
+!URIBaseParser methodsFor: 'initialization' stamp: 'ess 6/6/2025 06:38:36'!
+parseError: aMessageString
+
+	^ URIParseError signal: aMessageString! !
+
+!URIBaseParser methodsFor: 'parsing' stamp: 'ess 4/3/2025 04:47:10'!
+consume
+	"Update lookahead to the next character of the input, or nil.  Answer the old value of the lookahead."
+
+	| la |
+	la := lookahead ifNil: [
+		^ self parseError: 'Unexpected end of input' ].
+	self step.
+	^ la! !
+
+!URIBaseParser methodsFor: 'parsing' stamp: 'ess 4/3/2025 04:47:26'!
+expect: aCharacter
+
+	(self match: aCharacter) ifFalse: [
+		^ self parseError: 'Expected ', aCharacter asString ]! !
+
+!URIBaseParser methodsFor: 'parsing' stamp: 'ess 4/3/2025 04:47:45'!
+lookahead
+
+	^ lookahead! !
+
+!URIBaseParser methodsFor: 'parsing' stamp: 'ess 4/3/2025 04:47:53'!
+match: aCharacter
+	"Consume the next character only if it matches aCharacter.  Answer true if the match succeeded."
+
+	| isMatch |
+	isMatch := lookahead = aCharacter.
+	isMatch ifTrue: [
+		self consume ].
+	^ isMatch! !
+
+!URIBaseParser methodsFor: 'parsing' stamp: 'ess 4/3/2025 04:47:59'!
+next
+
+	^ input next! !
+
+!URIBaseParser methodsFor: 'parsing' stamp: 'ess 4/3/2025 04:48:04'!
+parse
+
+	^ self subclassResponsibility! !
+
+!URIBaseParser methodsFor: 'parsing' stamp: 'ess 4/3/2025 04:48:09'!
+parse: aStringOrStream
+
+	self input: aStringOrStream.
+	^ self parse! !
+
+!URIBaseParser methodsFor: 'parsing' stamp: 'ess 4/3/2025 03:41:18'!
+step
+	"Move to next character of input."
+
+	lookahead := input atEnd
+		ifFalse: [ self next ]
+		ifTrue: [ nil ]! !
+
+!URIBaseParser methodsFor: 'testing' stamp: 'ess 4/3/2025 04:47:00'!
+atEnd
+
+	^ lookahead isNil! !
+
+!URIBaseParser methodsFor: 'testing' stamp: 'ess 4/3/2025 04:47:18'!
+didSucceed
+	"We succeeded if we parsed all the input."
+
+	^ self atEnd! !
+
+!URIBaseParser methodsFor: 'testing' stamp: 'ess 4/3/2025 04:47:35'!
+isAscii
+
+	^ lookahead notNil
+		and: [ lookahead codePoint <= 127 ]! !
+
+!URIBaseParser methodsFor: 'testing' stamp: 'ess 4/3/2025 04:47:41'!
+isDigit
+
+	^ lookahead notNil
+		and: [ lookahead isDigit ]! !
+
+!URIBaseParser class methodsFor: 'parsing' stamp: 'ess 4/3/2025 04:36:06'!
+parse: aStringOrStream
+
+	^ self new
+		parse: aStringOrStream! !
+
+!PercentEncoding methodsFor: 'parsing' stamp: 'ess 4/3/2025 05:01:52'!
+parse
+
+	^ String streamContents: [ :stream |
+		| characters |
+		[ self atEnd ] whileFalse: [
+			(lookahead = $%
+					and: [ (characters := self readEncodedCharacters) notNil ])
+				ifTrue: [
+					stream nextPutAll: characters ]
+				ifFalse: [
+					stream nextPut: self consume ] ] ]! !
+
+!PercentEncoding methodsFor: 'private' stamp: 'ess 4/3/2025 04:59:09'!
+readEncodedByte
+
+	| a b |
+	(self match: $%) ifFalse: [ ^nil ].
+	a := self readHexDigit ifNil: [ ^nil ].
+	b := self readHexDigit ifNil: [ ^nil ].
+	^ a * 16 + b! !
+
+!PercentEncoding methodsFor: 'private' stamp: 'ess 4/3/2025 04:49:40'!
+readEncodedBytes
+
+	| bytes |
+	bytes := ByteArray streamContents: [ :stream |
+		| byte |
+		[ lookahead == $%
+				and: [ (byte := self readEncodedByte) notNil ] ]
+			whileTrue: [
+				stream nextPut: byte ] ].
+	^ bytes notEmpty
+		ifTrue: [ bytes ]
+		ifFalse: [ nil ]! !
+
+!PercentEncoding methodsFor: 'private' stamp: 'ess 4/3/2025 04:50:04'!
+readEncodedCharacters
+
+	^ self withSaveDo: [ :reset |
+		[
+			self readEncodedBytes ifNotNil: [ :octets |
+				CharacterSequence fromUtf8Bytes: octets ]
+		]
+			on: Error
+			do: [
+				reset value.
+				^ nil ] ]! !
+
+!PercentEncoding methodsFor: 'private' stamp: 'ess 4/3/2025 10:21:03'!
+readHexDigit
+
+	^ lookahead ifNotNil: [
+		self xDigitValue ]! !
+
+!PercentEncoding class methodsFor: 'constants' stamp: 'ess 4/3/2025 08:57:52'!
+unreservedCodepoints
+	"Unreserved characters do not need to be percent-encoded."
+	"Unreserved characters are defined as: uppercase and lowercase letters, decimal digits, hyphen, period, underscore, and tilde.
+		unreserved = ALPHA / DIGIT / '-' / '.' / '_' / '~'
+"
+
+	^ `
+		'-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz~'
+			inject: (Array new: 127 withAll: false)
+			into: [ :sum :each |
+				sum
+					at: each codePoint
+					put: true.
+				sum ]
+	`! !
+
+!PercentEncoding class methodsFor: 'converting' stamp: 'ess 4/3/2025 09:00:29'!
+decode: aStringOrStream
+	"Interpret percent-encoded sequences in the input string or stream.  Answer the decoded string."
+
+	^ self parse: aStringOrStream! !
+
+!PercentEncoding class methodsFor: 'converting' stamp: 'ess 4/3/2025 09:01:30'!
+encode: aStringOrBytes
+	"Answer a string that percent-encodes any reserved characters in the input."
+
+	| hexDigits bytes |
+	hexDigits := `
+		'0123456789ABCDEF' asByteArray
+	`.
+	bytes := aStringOrBytes isString
+		ifTrue: [ aStringOrBytes asUtf8Bytes ]
+		ifFalse: [ aStringOrBytes ].
+	^ (ByteArray streamContents: [ :stream |
+		bytes do: [ :each |
+			(self isUnreservedCodepoint: each)
+				ifTrue: [ stream nextPut: each ]
+				ifFalse:
+					[ stream
+						nextPut: `$% codePoint`;
+						nextPut: (hexDigits at: each // 16 + 1);
+						nextPut: (hexDigits at: each \\ 16 + 1) ] ] ])
+			asString! !
+
+!PercentEncoding class methodsFor: 'converting' stamp: 'ess 4/3/2025 09:03:58'!
+normalize: anEncodedString
+	"Re-encode the input string in canonical form."
+	"Canonical form does not encode unreserved characters, and hexadecimal escapes are always uppercase."
+
+	^ self encode: (self decode: anEncodedString)! !
+
+!PercentEncoding class methodsFor: 'testing' stamp: 'ess 4/3/2025 08:59:06'!
+isUnreserved: aCharacter
+	"Characters that are allowed in a URI but do not have a reserved purpose are called unreserved.  These include uppercase and lowercase letters, decimal digits, hyphen, period, underscore, and tilde."	
+	"See https://datatracker.ietf.org/doc/html/rfc3986#section-2.3"
+
+	^ self isUnreservedCodepoint: aCharacter codePoint! !
+
+!PercentEncoding class methodsFor: 'testing' stamp: 'ess 4/3/2025 08:59:23'!
+isUnreservedCodepoint: aCodepoint
+
+	^ (aCodepoint
+		between: `$- codePoint`
+		and: `$~ codePoint`)
+			and: [ self unreservedCodepoints at: aCodepoint ]! !
+
+!URIParser methodsFor: 'constants' stamp: 'ess 4/3/2025 09:55:48'!
+subDelimiters
+	"Sub-delimiters are reserved for scheme- and authority-specific syntax within a URI component."
+	"Sub-delimiters are not used in the generic URI syntax but are still considered 'reserved' and should be URI-encoded when not intended as syntax.
+	In contrast, the characters reserved for the generic syntax are referred to as 'general delimiters'."
+
+	^ '!!$&''()*+,;='! !
+
+!URIParser methodsFor: 'parsing' stamp: 'ess 4/3/2025 09:57:20'!
+parse
+
+	uri scheme: self readScheme.
+	self parseHierarchicalPart.
+	(self match: $?) ifTrue: [
+		uri query: self readQuery ].
+	(self match: $#) ifTrue: [
+		uri fragment: self readFragment ].
+	^ self didSucceed
+		ifTrue: [ uri ]
+		ifFalse: [ nil ]! !
+
+!URIParser methodsFor: 'parsing' stamp: 'ess 4/3/2025 03:52:46'!
+parse: aStringOrStream into: aUri
+
+	uri := aUri.
+	^ self parse: aStringOrStream! !
+
+!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 03:48:44'!
+isAlphaNumeric
+
+	^ self isAscii
+		and: [ lookahead isAlphaNumeric ]! !
+
+!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 03:49:03'!
+isHostnameCharacter
+
+	^ (self isUnreserved
+		or: [ self isSubDelimiter ])
+		or: [ self isPercentEncoding ]! !
+
+!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 03:49:12'!
+isLetter
+
+	^ self isAscii
+		and: [ lookahead isLetter ]! !
+
+!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 03:49:25'!
+isNocolonPathCharacter
+
+	^ (lookahead ~= $:)
+		and: [ self isPathCharacter ]! !
+
+!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 03:49:43'!
+isPathCharacter
+
+	^ (self isUnreserved
+		or: [ self isSubDelimiterOr: ':@' ])
+		or: [ self isPercentEncoding ]! !
+
+!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 10:21:38'!
+isPercentEncoding
+	"Answer true if lookahead is the start of a valid percent-encoded sequence."
+
+	^ lookahead = $% and: [
+		self withSaveDo: [ :reset |
+			| a b |
+			self consume.
+			a := self xDigitValue.
+			b := self xDigitValue.
+			"Backtrack to the '%'.  This is only a lookahead, we're not consuming the encoding."
+			reset value.
+			"Succeed only if we recognized two hex-digits following the '%'."
+			a notNil and: [b notNil ] ] ]! !
+
+!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 03:50:49'!
+isQueryCharacter
+
+	^ self isPathCharacter
+		or: [ '/?' includes: lookahead ]! !
+
+!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 10:48:05'!
+isSchemeCharacter
+	"A scheme can contain only letters, numbers, and the allowed punctuation: plus ('+'), minus ('-'), or dot ('.')."
+
+	^ self isAlphaNumeric
+		or: [ '+-.' includes: lookahead ]! !
+
+!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 10:47:17'!
+isSchemeStartCharacter
+	"A scheme must begin with an ASCII letter, canonically in lowercase."
+
+	^ self isLetter! !
+
+!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 03:51:11'!
+isSubDelimiter
+
+	^ self subDelimiters includes: lookahead! !
+
+!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 03:51:19'!
+isSubDelimiterOr: otherAllowedCharacters
+
+	^ (self subDelimiters, otherAllowedCharacters) includes: lookahead! !
+
+!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 03:51:30'!
+isUnreserved
+
+	^ lookahead notNil
+		and: [ PercentEncoding isUnreserved: lookahead ]! !
+
+!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 03:51:53'!
+isUserinfoCharacter
+
+	^ ((lookahead = $:
+		or: [ self isUnreserved ])
+		or: [ self isSubDelimiter ])
+		or: [ self isPercentEncoding ]! !
+
+!URIParser methodsFor: 'private-authority' stamp: 'ess 4/3/2025 09:57:30'!
+parseAuthority
+
+	uri userinfo: self readUserinfo.
+	uri host: self readHost.
+	((self match: $:) and: [ self isDigit ]) ifTrue: [
+		uri port: self readPort ]! !
+
+!URIParser methodsFor: 'private-authority' stamp: 'ess 4/3/2025 09:57:30'!
+parseHierarchicalPart
+	"Parse both the authority and path components of the URI syntax."
+	"The authority and path must be considered together because the syntax for the path varies depending on the presence of the authority.  Specifically:
+	1. If a URI contains an authority component, then the path component must either be empty or begin with a slash ('/') character, e.g.. '//' [ authority ] [ '/' path ]
+	2. If a URI does not contain an authority component, then the path cannot begin with two slash characters ('//'), e.g., [ '/' path ]"
+
+	uri path:
+		((self match: $/)
+			ifTrue: [	"At least one slash, so look for presence of authority."
+				(self match: $/)
+					ifFalse: [ "Single slash indicates an absolute path."
+						self readAbsolutePath ]
+					ifTrue: [	"Two slashes introduces an authority."
+						self parseAuthority.
+						"Look again for the path following the authority."
+						(self match: $/)
+							ifTrue: [	"A single slash again indicates an absolute path."
+								self readAbsolutePath ]
+							ifFalse: [	"There is no syntax for a relative path following an authority."
+									"By rule #1 above, the path must be empty."
+								nil ]]]
+			ifFalse: [	"No slash, so path is either empty or relative."
+				self isPathCharacter
+					ifFalse: [	"Empty path" nil ]
+					ifTrue: [	"Relative path"
+						uri scheme
+							ifNotNil: [ self readRelativePath ]
+							ifNil: [ self readNoschemePath ] ] ])! !
+
+!URIParser methodsFor: 'private-authority' stamp: 'ess 4/3/2025 11:00:12'!
+readHost
+
+	lookahead = $[ ifTrue: [
+		^ self readIpLiteral ].
+	^ self isDigit
+		ifFalse: [ self readHostname ]
+		ifTrue: [
+			self readIPv4 ifNil: [
+				"Host started with a digit but wasn't a valid IPv4 address."
+				self readHostname ] ]! !
+
+!URIParser methodsFor: 'private-authority' stamp: 'ess 4/3/2025 04:51:21'!
+readHostname
+
+	^ self readPercentEncodingSatisfying: [:la | self isHostnameCharacter ]! !
+
+!URIParser methodsFor: 'private-authority' stamp: 'ess 4/3/2025 11:02:13'!
+readIPv4
+
+	^ self withSaveDo: [ :reset |
+		(1 to: 4) collect: [ :each |
+			each > 1 ifTrue: [
+				(self match: $.) ifFalse: [
+					reset value.
+					^ nil ] ].
+			self readOctet ifNil: [
+				reset value.
+				^ nil ] ] ]! !
+
+!URIParser methodsFor: 'private-authority' stamp: 'ess 4/3/2025 04:51:54'!
+readIpLiteral
+
+	"Not yet implemented."
+	^ nil! !
+
+!URIParser methodsFor: 'private-authority' stamp: 'ess 4/3/2025 11:02:30'!
+readOctet
+
+	| octet |
+	self isDigit ifFalse: [
+		^ nil ].
+	octet := self digitValue.
+	self isDigit ifTrue: [
+		octet := octet * 10 + self digitValue ].
+	self isDigit ifTrue: [
+		octet := octet * 10 + self digitValue ].
+	^ (octet between: 0 and: 255)
+		ifTrue: [ octet ]
+		ifFalse: [ nil ]! !
+
+!URIParser methodsFor: 'private-authority' stamp: 'ess 4/3/2025 05:04:32'!
+readPort
+
+	| port |
+	self isDigit ifFalse: [
+		^ self parseError: 'Expected port number'].
+	port := 0.
+	[ self isDigit ] whileTrue: [
+		port := port * 10 + self digitValue ].
+	^ (port between: 0 and: 65536)
+		ifTrue: [ port ]
+		ifFalse: [ nil ]! !
+
+!URIParser methodsFor: 'private-miscellaneous' stamp: 'ess 4/3/2025 03:59:13'!
+readFragment
+
+	"Fragments accept the same characters as queries."
+	^ self readQuery! !
+
+!URIParser methodsFor: 'private-miscellaneous' stamp: 'ess 4/3/2025 10:58:19'!
+readPercentEncodingSatisfying: aUnaryBlock
+	"Collect a sequence of characters that either satisfy the given predicate or--if the predicate allows '%'--are percent encoded."
+	"Note that the percent-encoded values themselves are not required to satisfy the predicate.  That's kinda the point.  Note also that we do not decode the percent-encodings, beyond ensuring their validity, in-case of encoded sub-delimiters that may be significant later.  Decoding percent-encoded components is a higher-level responsibility."
+
+	^ String streamContents: [ :stream |
+		[ aUnaryBlock value: lookahead ] whileTrue: [
+			(lookahead == $% and: [ self isPercentEncoding ])
+				ifFalse: [
+					"Not percent-encoded, but a valid character."
+					stream nextPut: self consume ]
+				ifTrue: [
+					"Copy the percent-encoding literally, don't decode it."
+					3 timesRepeat: [
+						stream nextPut: self consume ] ] ] ]! !
+
+!URIParser methodsFor: 'private-miscellaneous' stamp: 'ess 4/3/2025 04:53:56'!
+readQuery
+
+	^ self readPercentEncodingSatisfying: [ :la | self isQueryCharacter ]! !
+
+!URIParser methodsFor: 'private-miscellaneous' stamp: 'ess 4/3/2025 10:58:40'!
+readScheme
+
+	self isSchemeStartCharacter ifFalse: [
+		"Not a scheme."
+		^ nil ].
+	^ self withSaveDo: [ :reset |
+		| scheme |
+		scheme := String streamContents: [ :stream |
+			[ self isSchemeCharacter ] whileTrue: [
+				stream nextPut: self consume ] ].
+		(self match: $:)
+			ifTrue: [ scheme ]
+			ifFalse: [
+				"If present, the scheme must be followed by a colon (':')."
+				reset value.
+				nil ] ]! !
+
+!URIParser methodsFor: 'private-path' stamp: 'ess 6/6/2025 06:38:42'!
+readAbsolutePath
+
+	| firstSegment |
+	firstSegment := self readPathSegment.
+	firstSegment isEmpty ifTrue: [
+		^ URIPath root ].
+	^ URIPath absolute: (self readPathSegmentsAfter: firstSegment)! !
+
+!URIParser methodsFor: 'private-path' stamp: 'ess 4/3/2025 04:52:09'!
+readNocolonPathSegment
+
+	| segment |
+	segment := self readPercentEncodingSatisfying: [ :la | self isNocolonPathCharacter ].
+	segment isEmpty ifTrue: [
+		^ self parseError: 'Expected non-empty path segment' ].
+	^ segment! !
+
+!URIParser methodsFor: 'private-path' stamp: 'ess 4/3/2025 04:52:15'!
+readNonemptyPathSegment
+
+	self isPathCharacter ifFalse: [
+		^ self parseError: 'Expected non-empty path segment' ].
+	^ self readPathSegment! !
+
+!URIParser methodsFor: 'private-path' stamp: 'ess 4/3/2025 04:02:54'!
+readNoschemePath
+
+	^ self readRelativePathAfter: self readNocolonPathSegment! !
+
+!URIParser methodsFor: 'private-path' stamp: 'ess 4/3/2025 04:04:05'!
+readPathSegment
+	"May be empty."
+
+	^ self readPercentEncodingSatisfying: [ :la | self isPathCharacter ]! !
+
+!URIParser methodsFor: 'private-path' stamp: 'ess 4/3/2025 04:04:24'!
+readPathSegments
+
+	| segments |
+	segments := OrderedCollection with: self readPathSegment.
+	[ self match: $/ ] whileTrue: [
+		segments add: self readPathSegment ].
+	^ segments! !
+
+!URIParser methodsFor: 'private-path' stamp: 'ess 4/3/2025 04:04:37'!
+readPathSegmentsAfter: firstSegment
+
+	| segments |
+	segments := OrderedCollection with: firstSegment.
+	(self match: $/) ifTrue: [
+		segments addAll: self readPathSegments ].
+	^ segments! !
+
+!URIParser methodsFor: 'private-path' stamp: 'ess 4/3/2025 04:04:43'!
+readRelativePath
+
+	^ self readRelativePathAfter: self readNonemptyPathSegment! !
+
+!URIParser methodsFor: 'private-path' stamp: 'ess 6/6/2025 06:38:42'!
+readRelativePathAfter: firstSegment
+
+	^ URIPath relative: (self readPathSegmentsAfter: firstSegment)! !
+
+!URIParser methodsFor: 'private-path' stamp: 'ess 4/3/2025 04:05:18'!
+readUserinfo
+
+	^ self withSaveDo: [ :reset |
+		| userinfo |
+		userinfo := self readPercentEncodingSatisfying: [ :la | self isUserinfoCharacter ].
+		(self match: $@)
+			ifTrue: [ userinfo ]
+			ifFalse: [
+				reset value.
+				nil ] ]! !
+
+!URIParser class methodsFor: 'parsing' stamp: 'ess 4/3/2025 03:47:49'!
+parse: aStringOrStream into: aUri
+
+	^ self new
+		parse: aStringOrStream
+		into: aUri! !
+
+!URIPath methodsFor: 'accessing' stamp: 'ess 4/3/2025 10:44:24'!
+decodedSegments
+
+	^ segments ifNotNil: [
+		segments collect: [ :each |
+			PercentEncoding decode: each ] ]! !
+
+!URIPath methodsFor: 'accessing' stamp: 'ess 4/3/2025 10:44:15'!
+normalizedSegments
+
+	^ segments ifNotNil: [
+		segments collect: [ :each |
+			PercentEncoding normalize: each ] ]! !
+
+!URIPath methodsFor: 'accessing' stamp: 'ess 4/3/2025 04:11:43'!
 segments
 	"Can be nil for an empty path."
 
-	^segments! !
+	^ segments! !
 
-!URIPath methodsFor: 'comparing' stamp: 'ess 1/8/2025 11:52:33'!
-= anotherPath
+!URIPath methodsFor: 'comparing' stamp: 'ess 4/3/2025 04:06:51'!
+= aUriPath
 
-	self == anotherPath ifTrue: [^true].
-	(anotherPath is: #URIPath) ifFalse: [^false].
-	^(isAbsolute = anotherPath isAbsolute)
-		and: [segments = anotherPath segments]! !
+	self == aUriPath ifTrue: [ ^ true ].
+	self species == aUriPath species ifFalse: [ ^ false ].
+	^ (isAbsolute = aUriPath isAbsolute)
+		and: [ segments = aUriPath segments ]! !
 
-!URIPath methodsFor: 'comparing' stamp: 'ess 1/8/2025 11:47:58'!
+!URIPath methodsFor: 'comparing' stamp: 'ess 4/3/2025 04:07:00'!
 hash
 
-	^(self class hash
+	^ (self species hash
 		bitXor: isAbsolute hash)
 		bitXor: segments hash! !
 
-!URIPath methodsFor: 'converting' stamp: 'ess 1/8/2025 11:48:34'!
+!URIPath methodsFor: 'converting' stamp: 'ess 4/3/2025 09:22:18'!
 asNormal
+	"Answer a copy of this path in canonical form."
 
-	^self copy
+	^ self copy
 		beNormal;
 		yourself! !
 
-!URIPath methodsFor: 'converting' stamp: 'ess 1/8/2025 11:49:05'!
+!URIPath methodsFor: 'converting' stamp: 'ess 4/3/2025 09:22:33'!
 beNormal
-	"Normalize internal representation.
-	Reference: https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2.3"
+	"Normalize internal representation."
+	"See https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.2.3"
 
-	segments := segments ifNotNil:
-		[segments collect: [:each | PercentEncoding normalize: each]].
+	segments := segments ifNotNil: [
+		segments collect: [ :each |
+			PercentEncoding normalize: each ] ].
 	self removeDotSegments! !
 
-!URIPath methodsFor: 'converting' stamp: 'ess 1/8/2025 11:51:51'!
+!URIPath methodsFor: 'converting' stamp: 'ess 4/3/2025 09:23:37'!
 relativeTo: aBasePath
-	"Reference: https://datatracker.ietf.org/doc/html/rfc3986#section-5.2"
+	"Resolve this relative path in relation to the given base path."
+	"See https://datatracker.ietf.org/doc/html/rfc3986#section-5.2"
 
-	(aBasePath isNil or: [aBasePath segments isNil]) ifTrue: [^self withoutDotSegments].
-	^(self species new
+	(aBasePath isNil or: [ aBasePath segments isNil ]) ifTrue: [
+		^ self withoutDotSegments ].
+	^ (self species new
 		setSegments: aBasePath segments allButLast, segments
 		isAbsolute: aBasePath isAbsolute)
 			withoutDotSegments! !
 
-!URIPath methodsFor: 'converting' stamp: 'ess 1/8/2025 13:36:23'!
+!URIPath methodsFor: 'converting' stamp: 'ess 4/3/2025 09:23:46'!
 removeDotSegments
-	"Reference: https://datatracker.ietf.org/doc/html/rfc3986#section-5.2.4"
+	"See https://datatracker.ietf.org/doc/html/rfc3986#section-5.2.4"
 
 	| isDirectory result |
-	segments ifNil: [^self].
+	segments ifNil: [ ^ self ].
 
 	"Track if the last component added to result should be interpreted as a directory reference."
 	isDirectory := false.
 	result := OrderedCollection new.
-	segments do:
-		[:each |
-		(each = '..' and: [result notEmpty]) ifTrue: [result removeLast].
-		isDirectory := each = '..' | (each = '.').
-		isDirectory ifFalse: [result addLast: each]].
+	segments do: [ :each |
+		(each = '..' and: [ result notEmpty ]) ifTrue: [
+			result removeLast ].
+		isDirectory := each = '..' or: [ each = '.' ].
+		isDirectory ifFalse: [
+			result addLast: each ] ].
 
 	"Add an empty path segment to show that result is a directory."
-	isDirectory ifTrue: [result addLast: ''].
+	isDirectory ifTrue: [
+		result addLast: '' ].
 
 	segments := result! !
 
-!URIPath methodsFor: 'converting' stamp: 'ess 1/8/2025 13:01:47'!
+!URIPath methodsFor: 'converting' stamp: 'ess 4/3/2025 09:24:19'!
 withoutDotSegments
+	"Answer a copy of this path with dot-sequences (e.g., '.' or '..') removed."
 
-	^self copy
+	^ self copy
 		removeDotSegments;
 		yourself! !
 
-!URIPath methodsFor: 'printing' stamp: 'ess 1/8/2025 11:51:20'!
+!URIPath methodsFor: 'printing' stamp: 'ess 4/3/2025 04:11:31'!
 printOn: aStream
 
-	isAbsolute ifTrue: [aStream nextPut: $/].
+	isAbsolute ifTrue: [
+		aStream nextPut: $/ ].
 	segments
-		do: [:each | aStream nextPutAll: each]
-		separatedBy: [aStream nextPut: $/]! !
+		do: [ :each |
+			aStream nextPutAll: each ]
+		separatedBy: [
+			aStream nextPut: $/ ]! !
 
-!URIPath methodsFor: 'testing' stamp: 'ess 1/8/2025 11:49:46'!
+!URIPath methodsFor: 'testing' stamp: 'ess 6/6/2025 06:38:42'!
 is: aSymbol
 
-	^aSymbol == #URIPath or: [super is: aSymbol]! !
+	^ aSymbol == #URIPath or: [ super is: aSymbol ]! !
 
-!URIPath methodsFor: 'testing' stamp: 'ess 1/8/2025 11:50:01'!
+!URIPath methodsFor: 'testing' stamp: 'ess 4/3/2025 04:10:12'!
 isAbsolute
 
-	^isAbsolute! !
+	^ isAbsolute! !
 
-!URIPath methodsFor: 'testing' stamp: 'ess 1/8/2025 11:50:33'!
+!URIPath methodsFor: 'testing' stamp: 'ess 4/3/2025 04:10:23'!
 isDirectory
 	"Am I a directory reference?"
 
 	"We represent directories with a final empty segment."
-	^segments isEmptyOrNil not
-		and: [segments last isEmpty]! !
+	^ segments isEmptyOrNil not
+		and: [ segments last isEmpty ]! !
 
-!URIPath methodsFor: 'testing' stamp: 'ess 1/8/2025 11:50:42'!
+!URIPath methodsFor: 'testing' stamp: 'ess 4/3/2025 04:10:33'!
 isEmpty
 	"Do I represent an empty path?"
 
 	"Segments notNil and isEmpty denotes the root path '/' "
-	^segments isNil! !
+	^ segments isNil! !
 
-!URIPath methodsFor: 'testing' stamp: 'ess 1/8/2025 11:50:51'!
+!URIPath methodsFor: 'testing' stamp: 'ess 4/3/2025 04:10:39'!
 isRelative
 
-	^isAbsolute not! !
+	^ isAbsolute not! !
 
-!URIPath methodsFor: 'testing' stamp: 'ess 1/8/2025 11:50:57'!
+!URIPath methodsFor: 'testing' stamp: 'ess 4/3/2025 04:10:43'!
 notEmpty
 
-	^segments notNil! !
+	^ segments notNil! !
 
-!URIPath methodsFor: 'private' stamp: 'ess 1/8/2025 13:01:57'!
-setSegments: pathSegments isAbsolute: aBoolean
+!URIPath methodsFor: 'private' stamp: 'ess 4/3/2025 04:10:51'!
+setSegments: anOrderedCollectionOrNil isAbsolute: aBoolean
 
-	segments := pathSegments.
+	segments := anOrderedCollectionOrNil.
 	isAbsolute := aBoolean.
-	^self! !
+	^ self! !
 
-!URIPath class methodsFor: 'instance creation' stamp: 'ess 1/8/2025 13:07:04'!
+!URIPath class methodsFor: 'instance creation' stamp: 'ess 4/3/2025 09:21:05'!
 absolute: pathSegments
+	"The path-sesequence for an absolute path may be empty to designate the root."
 
-	^self new
+	pathSegments ifNil: [
+		^ self error: 'An absolute path must have a sequence of path-segments'].
+	^ self new
 		setSegments: pathSegments
 		isAbsolute: true! !
 
-!URIPath class methodsFor: 'instance creation' stamp: 'ess 1/8/2025 13:07:09'!
+!URIPath class methodsFor: 'instance creation' stamp: 'ess 4/3/2025 09:16:03'!
 empty
+	"An empty path contains no path-segments."
 
-	^self new
+	^ self new
 		setSegments: nil
 		isAbsolute: false! !
 
-!URIPath class methodsFor: 'instance creation' stamp: 'ess 1/8/2025 13:07:14'!
+!URIPath class methodsFor: 'instance creation' stamp: 'ess 4/3/2025 09:20:21'!
 relative: pathSegments
 
-	^self new
+	pathSegments isEmptyOrNil ifTrue: [
+		^ self error: 'A relative path must include a non-empty sequence of path-segments' ].
+	^ self new
 		setSegments: pathSegments
 		isAbsolute: false! !
 
-!URIPath class methodsFor: 'instance creation' stamp: 'ess 1/8/2025 13:06:55'!
+!URIPath class methodsFor: 'instance creation' stamp: 'ess 4/3/2025 04:06:12'!
 root
 
-	^self new
-		setSegments: OrderedCollection new
+	^ self new
+		setSegments: #()
 		isAbsolute: true! !
 
 !ByteArray methodsFor: '*URI-converting' stamp: 'ess 11/3/2024 08:49:47'!
