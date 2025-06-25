@@ -1,7 +1,8 @@
-'From Cuis7.5 [latest update: #7262] on 6 June 2025 at 6:41:45 am'!
+'From Cuis7.5 [latest update: #7279] on 25 June 2025 at 7:14:25 am'!
 'Description '!
-!provides: 'URI' 1 4!
+!provides: 'URI' 1 5!
 !requires: 'Cuis-Base' 75 7262 nil!
+!requires: 'Unicode' 1 5 nil!
 SystemOrganization addCategory: #URI!
 SystemOrganization addCategory: #'URI-Public'!
 SystemOrganization addCategory: #'URI-Tests'!
@@ -97,18 +98,18 @@ Object subclass: #URIAuthority
 URIAuthority class
 	instanceVariableNames: ''!
 
-!classDefinition: #URIBaseParser category: #'URI-Public'!
-Object subclass: #URIBaseParser
-	instanceVariableNames: 'input lookahead shift'
+!classDefinition: #URIPath category: #'URI-Public'!
+Object subclass: #URIPath
+	instanceVariableNames: 'segments isAbsolute'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'URI-Public'!
-!classDefinition: 'URIBaseParser class' category: #'URI-Public'!
-URIBaseParser class
+!classDefinition: 'URIPath class' category: #'URI-Public'!
+URIPath class
 	instanceVariableNames: ''!
 
 !classDefinition: #PercentEncoding category: #'URI-Public'!
-URIBaseParser subclass: #PercentEncoding
+RecursiveDescentParser subclass: #PercentEncoding
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -118,23 +119,13 @@ PercentEncoding class
 	instanceVariableNames: ''!
 
 !classDefinition: #URIParser category: #'URI-Public'!
-URIBaseParser subclass: #URIParser
+RecursiveDescentParser subclass: #URIParser
 	instanceVariableNames: 'uri'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'URI-Public'!
 !classDefinition: 'URIParser class' category: #'URI-Public'!
 URIParser class
-	instanceVariableNames: ''!
-
-!classDefinition: #URIPath category: #'URI-Public'!
-Object subclass: #URIPath
-	instanceVariableNames: 'segments isAbsolute'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'URI-Public'!
-!classDefinition: 'URIPath class' category: #'URI-Public'!
-URIPath class
 	instanceVariableNames: ''!
 
 
@@ -196,20 +187,6 @@ An authority can also be preceeded by an optional userinfo segment identifying t
 
 See also [Authority](https://datatracker.ietf.org/doc/html/rfc3986#section-3.2).!
 
-!URIBaseParser commentStamp: 'ess 4/3/2025 08:45:52' prior: 0!
-This is a utility for writing simple recursive-descent parsers with backtracking.
-
-It provides functionality common to both PercentEncoding and UriParser.!
-
-!PercentEncoding commentStamp: 'ess 4/3/2025 08:54:13' prior: 0!
-The URI syntax uses certain reserved characters as delimiters between the components of the URI.
-
-If a reserved character is used within any component of a URI in such a way that it could be interpreted as a syntax character, that character must be represented instead with a percent ("%") encoded hexadecimal escape.
-
-This class both encodes and decodes percent-encoded strings.
-
-See also [Percent-Encoding](https://datatracker.ietf.org/doc/html/rfc3986#section-2.1).!
-
 !URIPath commentStamp: 'ess 4/3/2025 09:59:07' prior: 0!
 A path is a hierarchical identifier for a resource within the scope of the URI's scheme and authority.
 
@@ -220,6 +197,15 @@ Paths can be:
 	- both absolute and empty, i.e., "/".
 
 Non-empty paths contain a sequence of segments identifying the resource.!
+
+!PercentEncoding commentStamp: 'ess 4/3/2025 08:54:13' prior: 0!
+The URI syntax uses certain reserved characters as delimiters between the components of the URI.
+
+If a reserved character is used within any component of a URI in such a way that it could be interpreted as a syntax character, that character must be represented instead with a percent ("%") encoded hexadecimal escape.
+
+This class both encodes and decodes percent-encoded strings.
+
+See also [Percent-Encoding](https://datatracker.ietf.org/doc/html/rfc3986#section-2.1).!
 
 !MultiDictionary methodsFor: 'accessing' stamp: 'ess 4/3/2025 04:38:37'!
 allAt: aKey
@@ -1273,624 +1259,6 @@ is: aSymbol
 
 	^ aSymbol == #URIAuthority or: [ super is: aSymbol ]! !
 
-!URIBaseParser methodsFor: 'accessing' stamp: 'ess 4/3/2025 05:03:31'!
-digitValue
-
-	^ self consume digitValue! !
-
-!URIBaseParser methodsFor: 'accessing' stamp: 'ess 11/3/2024 08:41:05'!
-input: aStringOrStream
-
-	input := aStringOrStream readStream.
-	self step! !
-
-!URIBaseParser methodsFor: 'accessing' stamp: 'ess 4/3/2025 10:20:34'!
-xDigitValue
-
-	| digitValue |
-	digitValue := self consume asUppercase digitValue.
-	^ (digitValue notNil and: [ digitValue between: 0 and: 15 ])
-		ifTrue: [ digitValue ]
-		ifFalse: [ nil ]! !
-
-!URIBaseParser methodsFor: 'backtracking' stamp: 'ess 11/19/2024 10:17:08'!
-restore
-
-	| saved |
-	saved := self unsave.
-	input position: saved key.
-	lookahead := saved value! !
-
-!URIBaseParser methodsFor: 'backtracking' stamp: 'ess 4/3/2025 04:48:22'!
-save
-
-	shift addLast: input position -> lookahead.
-	^ input position! !
-
-!URIBaseParser methodsFor: 'backtracking' stamp: 'ess 4/3/2025 04:48:43'!
-unsave
-
-	shift isEmpty ifTrue: [
-		^ self error: 'UriBaseParser internal error: restore without save' ].
-	^ shift removeLast! !
-
-!URIBaseParser methodsFor: 'backtracking' stamp: 'ess 4/3/2025 04:48:54'!
-withSaveDo: aUnaryBlock
-
-	| didRestore restore |
-	didRestore := false.
-	restore := [
-		self restore.
-		didRestore := true ].
-	self save.
-	^ [ aUnaryBlock value: restore ]
-		ensure: [
-			didRestore ifFalse: [
-				self unsave ] ]! !
-
-!URIBaseParser methodsFor: 'initialization' stamp: 'ess 11/1/2024 19:26:09'!
-initialize
-
-	shift := OrderedCollection new! !
-
-!URIBaseParser methodsFor: 'initialization' stamp: 'ess 6/6/2025 06:38:36'!
-parseError: aMessageString
-
-	^ URIParseError signal: aMessageString! !
-
-!URIBaseParser methodsFor: 'parsing' stamp: 'ess 4/3/2025 04:47:10'!
-consume
-	"Update lookahead to the next character of the input, or nil.  Answer the old value of the lookahead."
-
-	| la |
-	la := lookahead ifNil: [
-		^ self parseError: 'Unexpected end of input' ].
-	self step.
-	^ la! !
-
-!URIBaseParser methodsFor: 'parsing' stamp: 'ess 4/3/2025 04:47:26'!
-expect: aCharacter
-
-	(self match: aCharacter) ifFalse: [
-		^ self parseError: 'Expected ', aCharacter asString ]! !
-
-!URIBaseParser methodsFor: 'parsing' stamp: 'ess 4/3/2025 04:47:45'!
-lookahead
-
-	^ lookahead! !
-
-!URIBaseParser methodsFor: 'parsing' stamp: 'ess 4/3/2025 04:47:53'!
-match: aCharacter
-	"Consume the next character only if it matches aCharacter.  Answer true if the match succeeded."
-
-	| isMatch |
-	isMatch := lookahead = aCharacter.
-	isMatch ifTrue: [
-		self consume ].
-	^ isMatch! !
-
-!URIBaseParser methodsFor: 'parsing' stamp: 'ess 4/3/2025 04:47:59'!
-next
-
-	^ input next! !
-
-!URIBaseParser methodsFor: 'parsing' stamp: 'ess 4/3/2025 04:48:04'!
-parse
-
-	^ self subclassResponsibility! !
-
-!URIBaseParser methodsFor: 'parsing' stamp: 'ess 4/3/2025 04:48:09'!
-parse: aStringOrStream
-
-	self input: aStringOrStream.
-	^ self parse! !
-
-!URIBaseParser methodsFor: 'parsing' stamp: 'ess 4/3/2025 03:41:18'!
-step
-	"Move to next character of input."
-
-	lookahead := input atEnd
-		ifFalse: [ self next ]
-		ifTrue: [ nil ]! !
-
-!URIBaseParser methodsFor: 'testing' stamp: 'ess 4/3/2025 04:47:00'!
-atEnd
-
-	^ lookahead isNil! !
-
-!URIBaseParser methodsFor: 'testing' stamp: 'ess 4/3/2025 04:47:18'!
-didSucceed
-	"We succeeded if we parsed all the input."
-
-	^ self atEnd! !
-
-!URIBaseParser methodsFor: 'testing' stamp: 'ess 4/3/2025 04:47:35'!
-isAscii
-
-	^ lookahead notNil
-		and: [ lookahead codePoint <= 127 ]! !
-
-!URIBaseParser methodsFor: 'testing' stamp: 'ess 4/3/2025 04:47:41'!
-isDigit
-
-	^ lookahead notNil
-		and: [ lookahead isDigit ]! !
-
-!URIBaseParser class methodsFor: 'parsing' stamp: 'ess 4/3/2025 04:36:06'!
-parse: aStringOrStream
-
-	^ self new
-		parse: aStringOrStream! !
-
-!PercentEncoding methodsFor: 'parsing' stamp: 'ess 4/3/2025 05:01:52'!
-parse
-
-	^ String streamContents: [ :stream |
-		| characters |
-		[ self atEnd ] whileFalse: [
-			(lookahead = $%
-					and: [ (characters := self readEncodedCharacters) notNil ])
-				ifTrue: [
-					stream nextPutAll: characters ]
-				ifFalse: [
-					stream nextPut: self consume ] ] ]! !
-
-!PercentEncoding methodsFor: 'private' stamp: 'ess 4/3/2025 04:59:09'!
-readEncodedByte
-
-	| a b |
-	(self match: $%) ifFalse: [ ^nil ].
-	a := self readHexDigit ifNil: [ ^nil ].
-	b := self readHexDigit ifNil: [ ^nil ].
-	^ a * 16 + b! !
-
-!PercentEncoding methodsFor: 'private' stamp: 'ess 4/3/2025 04:49:40'!
-readEncodedBytes
-
-	| bytes |
-	bytes := ByteArray streamContents: [ :stream |
-		| byte |
-		[ lookahead == $%
-				and: [ (byte := self readEncodedByte) notNil ] ]
-			whileTrue: [
-				stream nextPut: byte ] ].
-	^ bytes notEmpty
-		ifTrue: [ bytes ]
-		ifFalse: [ nil ]! !
-
-!PercentEncoding methodsFor: 'private' stamp: 'ess 4/3/2025 04:50:04'!
-readEncodedCharacters
-
-	^ self withSaveDo: [ :reset |
-		[
-			self readEncodedBytes ifNotNil: [ :octets |
-				CharacterSequence fromUtf8Bytes: octets ]
-		]
-			on: Error
-			do: [
-				reset value.
-				^ nil ] ]! !
-
-!PercentEncoding methodsFor: 'private' stamp: 'ess 4/3/2025 10:21:03'!
-readHexDigit
-
-	^ lookahead ifNotNil: [
-		self xDigitValue ]! !
-
-!PercentEncoding class methodsFor: 'constants' stamp: 'ess 4/3/2025 08:57:52'!
-unreservedCodepoints
-	"Unreserved characters do not need to be percent-encoded."
-	"Unreserved characters are defined as: uppercase and lowercase letters, decimal digits, hyphen, period, underscore, and tilde.
-		unreserved = ALPHA / DIGIT / '-' / '.' / '_' / '~'
-"
-
-	^ `
-		'-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz~'
-			inject: (Array new: 127 withAll: false)
-			into: [ :sum :each |
-				sum
-					at: each codePoint
-					put: true.
-				sum ]
-	`! !
-
-!PercentEncoding class methodsFor: 'converting' stamp: 'ess 4/3/2025 09:00:29'!
-decode: aStringOrStream
-	"Interpret percent-encoded sequences in the input string or stream.  Answer the decoded string."
-
-	^ self parse: aStringOrStream! !
-
-!PercentEncoding class methodsFor: 'converting' stamp: 'ess 4/3/2025 09:01:30'!
-encode: aStringOrBytes
-	"Answer a string that percent-encodes any reserved characters in the input."
-
-	| hexDigits bytes |
-	hexDigits := `
-		'0123456789ABCDEF' asByteArray
-	`.
-	bytes := aStringOrBytes isString
-		ifTrue: [ aStringOrBytes asUtf8Bytes ]
-		ifFalse: [ aStringOrBytes ].
-	^ (ByteArray streamContents: [ :stream |
-		bytes do: [ :each |
-			(self isUnreservedCodepoint: each)
-				ifTrue: [ stream nextPut: each ]
-				ifFalse:
-					[ stream
-						nextPut: `$% codePoint`;
-						nextPut: (hexDigits at: each // 16 + 1);
-						nextPut: (hexDigits at: each \\ 16 + 1) ] ] ])
-			asString! !
-
-!PercentEncoding class methodsFor: 'converting' stamp: 'ess 4/3/2025 09:03:58'!
-normalize: anEncodedString
-	"Re-encode the input string in canonical form."
-	"Canonical form does not encode unreserved characters, and hexadecimal escapes are always uppercase."
-
-	^ self encode: (self decode: anEncodedString)! !
-
-!PercentEncoding class methodsFor: 'testing' stamp: 'ess 4/3/2025 08:59:06'!
-isUnreserved: aCharacter
-	"Characters that are allowed in a URI but do not have a reserved purpose are called unreserved.  These include uppercase and lowercase letters, decimal digits, hyphen, period, underscore, and tilde."	
-	"See https://datatracker.ietf.org/doc/html/rfc3986#section-2.3"
-
-	^ self isUnreservedCodepoint: aCharacter codePoint! !
-
-!PercentEncoding class methodsFor: 'testing' stamp: 'ess 4/3/2025 08:59:23'!
-isUnreservedCodepoint: aCodepoint
-
-	^ (aCodepoint
-		between: `$- codePoint`
-		and: `$~ codePoint`)
-			and: [ self unreservedCodepoints at: aCodepoint ]! !
-
-!URIParser methodsFor: 'constants' stamp: 'ess 4/3/2025 09:55:48'!
-subDelimiters
-	"Sub-delimiters are reserved for scheme- and authority-specific syntax within a URI component."
-	"Sub-delimiters are not used in the generic URI syntax but are still considered 'reserved' and should be URI-encoded when not intended as syntax.
-	In contrast, the characters reserved for the generic syntax are referred to as 'general delimiters'."
-
-	^ '!!$&''()*+,;='! !
-
-!URIParser methodsFor: 'parsing' stamp: 'ess 4/3/2025 09:57:20'!
-parse
-
-	uri scheme: self readScheme.
-	self parseHierarchicalPart.
-	(self match: $?) ifTrue: [
-		uri query: self readQuery ].
-	(self match: $#) ifTrue: [
-		uri fragment: self readFragment ].
-	^ self didSucceed
-		ifTrue: [ uri ]
-		ifFalse: [ nil ]! !
-
-!URIParser methodsFor: 'parsing' stamp: 'ess 4/3/2025 03:52:46'!
-parse: aStringOrStream into: aUri
-
-	uri := aUri.
-	^ self parse: aStringOrStream! !
-
-!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 03:48:44'!
-isAlphaNumeric
-
-	^ self isAscii
-		and: [ lookahead isAlphaNumeric ]! !
-
-!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 03:49:03'!
-isHostnameCharacter
-
-	^ (self isUnreserved
-		or: [ self isSubDelimiter ])
-		or: [ self isPercentEncoding ]! !
-
-!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 03:49:12'!
-isLetter
-
-	^ self isAscii
-		and: [ lookahead isLetter ]! !
-
-!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 03:49:25'!
-isNocolonPathCharacter
-
-	^ (lookahead ~= $:)
-		and: [ self isPathCharacter ]! !
-
-!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 03:49:43'!
-isPathCharacter
-
-	^ (self isUnreserved
-		or: [ self isSubDelimiterOr: ':@' ])
-		or: [ self isPercentEncoding ]! !
-
-!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 10:21:38'!
-isPercentEncoding
-	"Answer true if lookahead is the start of a valid percent-encoded sequence."
-
-	^ lookahead = $% and: [
-		self withSaveDo: [ :reset |
-			| a b |
-			self consume.
-			a := self xDigitValue.
-			b := self xDigitValue.
-			"Backtrack to the '%'.  This is only a lookahead, we're not consuming the encoding."
-			reset value.
-			"Succeed only if we recognized two hex-digits following the '%'."
-			a notNil and: [b notNil ] ] ]! !
-
-!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 03:50:49'!
-isQueryCharacter
-
-	^ self isPathCharacter
-		or: [ '/?' includes: lookahead ]! !
-
-!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 10:48:05'!
-isSchemeCharacter
-	"A scheme can contain only letters, numbers, and the allowed punctuation: plus ('+'), minus ('-'), or dot ('.')."
-
-	^ self isAlphaNumeric
-		or: [ '+-.' includes: lookahead ]! !
-
-!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 10:47:17'!
-isSchemeStartCharacter
-	"A scheme must begin with an ASCII letter, canonically in lowercase."
-
-	^ self isLetter! !
-
-!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 03:51:11'!
-isSubDelimiter
-
-	^ self subDelimiters includes: lookahead! !
-
-!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 03:51:19'!
-isSubDelimiterOr: otherAllowedCharacters
-
-	^ (self subDelimiters, otherAllowedCharacters) includes: lookahead! !
-
-!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 03:51:30'!
-isUnreserved
-
-	^ lookahead notNil
-		and: [ PercentEncoding isUnreserved: lookahead ]! !
-
-!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 03:51:53'!
-isUserinfoCharacter
-
-	^ ((lookahead = $:
-		or: [ self isUnreserved ])
-		or: [ self isSubDelimiter ])
-		or: [ self isPercentEncoding ]! !
-
-!URIParser methodsFor: 'private-authority' stamp: 'ess 4/3/2025 09:57:30'!
-parseAuthority
-
-	uri userinfo: self readUserinfo.
-	uri host: self readHost.
-	((self match: $:) and: [ self isDigit ]) ifTrue: [
-		uri port: self readPort ]! !
-
-!URIParser methodsFor: 'private-authority' stamp: 'ess 4/3/2025 09:57:30'!
-parseHierarchicalPart
-	"Parse both the authority and path components of the URI syntax."
-	"The authority and path must be considered together because the syntax for the path varies depending on the presence of the authority.  Specifically:
-	1. If a URI contains an authority component, then the path component must either be empty or begin with a slash ('/') character, e.g.. '//' [ authority ] [ '/' path ]
-	2. If a URI does not contain an authority component, then the path cannot begin with two slash characters ('//'), e.g., [ '/' path ]"
-
-	uri path:
-		((self match: $/)
-			ifTrue: [	"At least one slash, so look for presence of authority."
-				(self match: $/)
-					ifFalse: [ "Single slash indicates an absolute path."
-						self readAbsolutePath ]
-					ifTrue: [	"Two slashes introduces an authority."
-						self parseAuthority.
-						"Look again for the path following the authority."
-						(self match: $/)
-							ifTrue: [	"A single slash again indicates an absolute path."
-								self readAbsolutePath ]
-							ifFalse: [	"There is no syntax for a relative path following an authority."
-									"By rule #1 above, the path must be empty."
-								nil ]]]
-			ifFalse: [	"No slash, so path is either empty or relative."
-				self isPathCharacter
-					ifFalse: [	"Empty path" nil ]
-					ifTrue: [	"Relative path"
-						uri scheme
-							ifNotNil: [ self readRelativePath ]
-							ifNil: [ self readNoschemePath ] ] ])! !
-
-!URIParser methodsFor: 'private-authority' stamp: 'ess 4/3/2025 11:00:12'!
-readHost
-
-	lookahead = $[ ifTrue: [
-		^ self readIpLiteral ].
-	^ self isDigit
-		ifFalse: [ self readHostname ]
-		ifTrue: [
-			self readIPv4 ifNil: [
-				"Host started with a digit but wasn't a valid IPv4 address."
-				self readHostname ] ]! !
-
-!URIParser methodsFor: 'private-authority' stamp: 'ess 4/3/2025 04:51:21'!
-readHostname
-
-	^ self readPercentEncodingSatisfying: [:la | self isHostnameCharacter ]! !
-
-!URIParser methodsFor: 'private-authority' stamp: 'ess 4/3/2025 11:02:13'!
-readIPv4
-
-	^ self withSaveDo: [ :reset |
-		(1 to: 4) collect: [ :each |
-			each > 1 ifTrue: [
-				(self match: $.) ifFalse: [
-					reset value.
-					^ nil ] ].
-			self readOctet ifNil: [
-				reset value.
-				^ nil ] ] ]! !
-
-!URIParser methodsFor: 'private-authority' stamp: 'ess 4/3/2025 04:51:54'!
-readIpLiteral
-
-	"Not yet implemented."
-	^ nil! !
-
-!URIParser methodsFor: 'private-authority' stamp: 'ess 4/3/2025 11:02:30'!
-readOctet
-
-	| octet |
-	self isDigit ifFalse: [
-		^ nil ].
-	octet := self digitValue.
-	self isDigit ifTrue: [
-		octet := octet * 10 + self digitValue ].
-	self isDigit ifTrue: [
-		octet := octet * 10 + self digitValue ].
-	^ (octet between: 0 and: 255)
-		ifTrue: [ octet ]
-		ifFalse: [ nil ]! !
-
-!URIParser methodsFor: 'private-authority' stamp: 'ess 4/3/2025 05:04:32'!
-readPort
-
-	| port |
-	self isDigit ifFalse: [
-		^ self parseError: 'Expected port number'].
-	port := 0.
-	[ self isDigit ] whileTrue: [
-		port := port * 10 + self digitValue ].
-	^ (port between: 0 and: 65536)
-		ifTrue: [ port ]
-		ifFalse: [ nil ]! !
-
-!URIParser methodsFor: 'private-miscellaneous' stamp: 'ess 4/3/2025 03:59:13'!
-readFragment
-
-	"Fragments accept the same characters as queries."
-	^ self readQuery! !
-
-!URIParser methodsFor: 'private-miscellaneous' stamp: 'ess 4/3/2025 10:58:19'!
-readPercentEncodingSatisfying: aUnaryBlock
-	"Collect a sequence of characters that either satisfy the given predicate or--if the predicate allows '%'--are percent encoded."
-	"Note that the percent-encoded values themselves are not required to satisfy the predicate.  That's kinda the point.  Note also that we do not decode the percent-encodings, beyond ensuring their validity, in-case of encoded sub-delimiters that may be significant later.  Decoding percent-encoded components is a higher-level responsibility."
-
-	^ String streamContents: [ :stream |
-		[ aUnaryBlock value: lookahead ] whileTrue: [
-			(lookahead == $% and: [ self isPercentEncoding ])
-				ifFalse: [
-					"Not percent-encoded, but a valid character."
-					stream nextPut: self consume ]
-				ifTrue: [
-					"Copy the percent-encoding literally, don't decode it."
-					3 timesRepeat: [
-						stream nextPut: self consume ] ] ] ]! !
-
-!URIParser methodsFor: 'private-miscellaneous' stamp: 'ess 4/3/2025 04:53:56'!
-readQuery
-
-	^ self readPercentEncodingSatisfying: [ :la | self isQueryCharacter ]! !
-
-!URIParser methodsFor: 'private-miscellaneous' stamp: 'ess 4/3/2025 10:58:40'!
-readScheme
-
-	self isSchemeStartCharacter ifFalse: [
-		"Not a scheme."
-		^ nil ].
-	^ self withSaveDo: [ :reset |
-		| scheme |
-		scheme := String streamContents: [ :stream |
-			[ self isSchemeCharacter ] whileTrue: [
-				stream nextPut: self consume ] ].
-		(self match: $:)
-			ifTrue: [ scheme ]
-			ifFalse: [
-				"If present, the scheme must be followed by a colon (':')."
-				reset value.
-				nil ] ]! !
-
-!URIParser methodsFor: 'private-path' stamp: 'ess 6/6/2025 06:38:42'!
-readAbsolutePath
-
-	| firstSegment |
-	firstSegment := self readPathSegment.
-	firstSegment isEmpty ifTrue: [
-		^ URIPath root ].
-	^ URIPath absolute: (self readPathSegmentsAfter: firstSegment)! !
-
-!URIParser methodsFor: 'private-path' stamp: 'ess 4/3/2025 04:52:09'!
-readNocolonPathSegment
-
-	| segment |
-	segment := self readPercentEncodingSatisfying: [ :la | self isNocolonPathCharacter ].
-	segment isEmpty ifTrue: [
-		^ self parseError: 'Expected non-empty path segment' ].
-	^ segment! !
-
-!URIParser methodsFor: 'private-path' stamp: 'ess 4/3/2025 04:52:15'!
-readNonemptyPathSegment
-
-	self isPathCharacter ifFalse: [
-		^ self parseError: 'Expected non-empty path segment' ].
-	^ self readPathSegment! !
-
-!URIParser methodsFor: 'private-path' stamp: 'ess 4/3/2025 04:02:54'!
-readNoschemePath
-
-	^ self readRelativePathAfter: self readNocolonPathSegment! !
-
-!URIParser methodsFor: 'private-path' stamp: 'ess 4/3/2025 04:04:05'!
-readPathSegment
-	"May be empty."
-
-	^ self readPercentEncodingSatisfying: [ :la | self isPathCharacter ]! !
-
-!URIParser methodsFor: 'private-path' stamp: 'ess 4/3/2025 04:04:24'!
-readPathSegments
-
-	| segments |
-	segments := OrderedCollection with: self readPathSegment.
-	[ self match: $/ ] whileTrue: [
-		segments add: self readPathSegment ].
-	^ segments! !
-
-!URIParser methodsFor: 'private-path' stamp: 'ess 4/3/2025 04:04:37'!
-readPathSegmentsAfter: firstSegment
-
-	| segments |
-	segments := OrderedCollection with: firstSegment.
-	(self match: $/) ifTrue: [
-		segments addAll: self readPathSegments ].
-	^ segments! !
-
-!URIParser methodsFor: 'private-path' stamp: 'ess 4/3/2025 04:04:43'!
-readRelativePath
-
-	^ self readRelativePathAfter: self readNonemptyPathSegment! !
-
-!URIParser methodsFor: 'private-path' stamp: 'ess 6/6/2025 06:38:42'!
-readRelativePathAfter: firstSegment
-
-	^ URIPath relative: (self readPathSegmentsAfter: firstSegment)! !
-
-!URIParser methodsFor: 'private-path' stamp: 'ess 4/3/2025 04:05:18'!
-readUserinfo
-
-	^ self withSaveDo: [ :reset |
-		| userinfo |
-		userinfo := self readPercentEncodingSatisfying: [ :la | self isUserinfoCharacter ].
-		(self match: $@)
-			ifTrue: [ userinfo ]
-			ifFalse: [
-				reset value.
-				nil ] ]! !
-
-!URIParser class methodsFor: 'parsing' stamp: 'ess 4/3/2025 03:47:49'!
-parse: aStringOrStream into: aUri
-
-	^ self new
-		parse: aStringOrStream
-		into: aUri! !
-
 !URIPath methodsFor: 'accessing' stamp: 'ess 4/3/2025 10:44:24'!
 decodedSegments
 
@@ -2073,6 +1441,476 @@ root
 	^ self new
 		setSegments: #()
 		isAbsolute: true! !
+
+!PercentEncoding methodsFor: 'initialization' stamp: 'ess 6/25/2025 07:03:58'!
+parseErrorClass
+
+	^ URIParseError! !
+
+!PercentEncoding methodsFor: 'parsing' stamp: 'ess 4/3/2025 05:01:52'!
+parse
+
+	^ String streamContents: [ :stream |
+		| characters |
+		[ self atEnd ] whileFalse: [
+			(lookahead = $%
+					and: [ (characters := self readEncodedCharacters) notNil ])
+				ifTrue: [
+					stream nextPutAll: characters ]
+				ifFalse: [
+					stream nextPut: self consume ] ] ]! !
+
+!PercentEncoding methodsFor: 'private' stamp: 'ess 4/3/2025 04:59:09'!
+readEncodedByte
+
+	| a b |
+	(self match: $%) ifFalse: [ ^nil ].
+	a := self readHexDigit ifNil: [ ^nil ].
+	b := self readHexDigit ifNil: [ ^nil ].
+	^ a * 16 + b! !
+
+!PercentEncoding methodsFor: 'private' stamp: 'ess 4/3/2025 04:49:40'!
+readEncodedBytes
+
+	| bytes |
+	bytes := ByteArray streamContents: [ :stream |
+		| byte |
+		[ lookahead == $%
+				and: [ (byte := self readEncodedByte) notNil ] ]
+			whileTrue: [
+				stream nextPut: byte ] ].
+	^ bytes notEmpty
+		ifTrue: [ bytes ]
+		ifFalse: [ nil ]! !
+
+!PercentEncoding methodsFor: 'private' stamp: 'ess 6/25/2025 07:12:54'!
+readEncodedCharacters
+
+	^ self withSaveDo: [ :restore |
+		[
+			self readEncodedBytes ifNotNil: [ :octets |
+				CharacterSequence fromUtf8Bytes: octets ]
+		]
+			on: Error
+			do: [
+				restore value.
+				^ nil ] ]! !
+
+!PercentEncoding methodsFor: 'private' stamp: 'ess 6/25/2025 07:10:07'!
+readHexDigit
+	"Answer nil instead of raising an error if next character is not a hexadecimal digit."
+	
+	^ self isXDigit
+		ifTrue: [ self consumeXDigit ]! !
+
+!PercentEncoding class methodsFor: 'constants' stamp: 'ess 4/3/2025 08:57:52'!
+unreservedCodepoints
+	"Unreserved characters do not need to be percent-encoded."
+	"Unreserved characters are defined as: uppercase and lowercase letters, decimal digits, hyphen, period, underscore, and tilde.
+		unreserved = ALPHA / DIGIT / '-' / '.' / '_' / '~'
+"
+
+	^ `
+		'-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz~'
+			inject: (Array new: 127 withAll: false)
+			into: [ :sum :each |
+				sum
+					at: each codePoint
+					put: true.
+				sum ]
+	`! !
+
+!PercentEncoding class methodsFor: 'converting' stamp: 'ess 4/3/2025 09:00:29'!
+decode: aStringOrStream
+	"Interpret percent-encoded sequences in the input string or stream.  Answer the decoded string."
+
+	^ self parse: aStringOrStream! !
+
+!PercentEncoding class methodsFor: 'converting' stamp: 'ess 4/3/2025 09:01:30'!
+encode: aStringOrBytes
+	"Answer a string that percent-encodes any reserved characters in the input."
+
+	| hexDigits bytes |
+	hexDigits := `
+		'0123456789ABCDEF' asByteArray
+	`.
+	bytes := aStringOrBytes isString
+		ifTrue: [ aStringOrBytes asUtf8Bytes ]
+		ifFalse: [ aStringOrBytes ].
+	^ (ByteArray streamContents: [ :stream |
+		bytes do: [ :each |
+			(self isUnreservedCodepoint: each)
+				ifTrue: [ stream nextPut: each ]
+				ifFalse:
+					[ stream
+						nextPut: `$% codePoint`;
+						nextPut: (hexDigits at: each // 16 + 1);
+						nextPut: (hexDigits at: each \\ 16 + 1) ] ] ])
+			asString! !
+
+!PercentEncoding class methodsFor: 'converting' stamp: 'ess 4/3/2025 09:03:58'!
+normalize: anEncodedString
+	"Re-encode the input string in canonical form."
+	"Canonical form does not encode unreserved characters, and hexadecimal escapes are always uppercase."
+
+	^ self encode: (self decode: anEncodedString)! !
+
+!PercentEncoding class methodsFor: 'testing' stamp: 'ess 4/3/2025 08:59:06'!
+isUnreserved: aCharacter
+	"Characters that are allowed in a URI but do not have a reserved purpose are called unreserved.  These include uppercase and lowercase letters, decimal digits, hyphen, period, underscore, and tilde."	
+	"See https://datatracker.ietf.org/doc/html/rfc3986#section-2.3"
+
+	^ self isUnreservedCodepoint: aCharacter codePoint! !
+
+!PercentEncoding class methodsFor: 'testing' stamp: 'ess 4/3/2025 08:59:23'!
+isUnreservedCodepoint: aCodepoint
+
+	^ (aCodepoint
+		between: `$- codePoint`
+		and: `$~ codePoint`)
+			and: [ self unreservedCodepoints at: aCodepoint ]! !
+
+!URIParser methodsFor: 'constants' stamp: 'ess 4/3/2025 09:55:48'!
+subDelimiters
+	"Sub-delimiters are reserved for scheme- and authority-specific syntax within a URI component."
+	"Sub-delimiters are not used in the generic URI syntax but are still considered 'reserved' and should be URI-encoded when not intended as syntax.
+	In contrast, the characters reserved for the generic syntax are referred to as 'general delimiters'."
+
+	^ '!!$&''()*+,;='! !
+
+!URIParser methodsFor: 'initialization' stamp: 'ess 6/25/2025 07:03:58'!
+parseErrorClass
+
+	^ URIParseError! !
+
+!URIParser methodsFor: 'parsing' stamp: 'ess 6/25/2025 06:56:38'!
+parse
+
+	uri scheme: self readScheme.
+	self parseHierarchicalPart.
+	(self match: $?) ifTrue: [
+		uri query: self readQuery ].
+	(self match: $#) ifTrue: [
+		uri fragment: self readFragment ].
+	^ self atEnd
+		ifTrue: [ uri ]
+		ifFalse: [ nil ]! !
+
+!URIParser methodsFor: 'parsing' stamp: 'ess 4/3/2025 03:52:46'!
+parse: aStringOrStream into: aUri
+
+	uri := aUri.
+	^ self parse: aStringOrStream! !
+
+!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 03:49:03'!
+isHostnameCharacter
+
+	^ (self isUnreserved
+		or: [ self isSubDelimiter ])
+		or: [ self isPercentEncoding ]! !
+
+!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 03:49:25'!
+isNocolonPathCharacter
+
+	^ (lookahead ~= $:)
+		and: [ self isPathCharacter ]! !
+
+!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 03:49:43'!
+isPathCharacter
+
+	^ (self isUnreserved
+		or: [ self isSubDelimiterOr: ':@' ])
+		or: [ self isPercentEncoding ]! !
+
+!URIParser methodsFor: 'testing' stamp: 'ess 6/25/2025 07:13:00'!
+isPercentEncoding
+	"Answer true if lookahead is the start of a valid percent-encoded sequence."
+
+	^ lookahead = $% and: [
+		self withSaveDo: [ :restore |
+			| a b |
+			self consume.
+			a := self consumeXDigit.
+			b := self consumeXDigit.
+			"Backtrack to the '%'.  This is only a lookahead, we're not consuming the encoding."
+			restore value.
+			"Succeed only if we recognized two hex-digits following the '%'."
+			a notNil and: [b notNil ] ] ]! !
+
+!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 03:50:49'!
+isQueryCharacter
+
+	^ self isPathCharacter
+		or: [ '/?' includes: lookahead ]! !
+
+!URIParser methodsFor: 'testing' stamp: 'ess 6/25/2025 06:53:46'!
+isSchemeCharacter
+	"A scheme can contain only letters, numbers, and the allowed punctuation: plus ('+'), minus ('-'), or dot ('.')."
+
+	^ self isAlnum
+		or: [ '+-.' includes: lookahead ]! !
+
+!URIParser methodsFor: 'testing' stamp: 'ess 6/25/2025 06:54:45'!
+isSchemeStartCharacter
+	"A scheme must begin with an ASCII letter, canonically in lowercase."
+
+	^ self isAlpha! !
+
+!URIParser methodsFor: 'testing' stamp: 'ess 6/25/2025 06:55:54'!
+isSubDelimiter
+
+	^ self subDelimiters
+		includes: lookahead! !
+
+!URIParser methodsFor: 'testing' stamp: 'ess 6/25/2025 06:56:03'!
+isSubDelimiterOr: otherAllowedCharacters
+
+	^ (self subDelimiters, otherAllowedCharacters)
+		includes: lookahead! !
+
+!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 03:51:30'!
+isUnreserved
+
+	^ lookahead notNil
+		and: [ PercentEncoding isUnreserved: lookahead ]! !
+
+!URIParser methodsFor: 'testing' stamp: 'ess 4/3/2025 03:51:53'!
+isUserinfoCharacter
+
+	^ ((lookahead = $:
+		or: [ self isUnreserved ])
+		or: [ self isSubDelimiter ])
+		or: [ self isPercentEncoding ]! !
+
+!URIParser methodsFor: 'private-authority' stamp: 'ess 4/3/2025 09:57:30'!
+parseAuthority
+
+	uri userinfo: self readUserinfo.
+	uri host: self readHost.
+	((self match: $:) and: [ self isDigit ]) ifTrue: [
+		uri port: self readPort ]! !
+
+!URIParser methodsFor: 'private-authority' stamp: 'ess 4/3/2025 09:57:30'!
+parseHierarchicalPart
+	"Parse both the authority and path components of the URI syntax."
+	"The authority and path must be considered together because the syntax for the path varies depending on the presence of the authority.  Specifically:
+	1. If a URI contains an authority component, then the path component must either be empty or begin with a slash ('/') character, e.g.. '//' [ authority ] [ '/' path ]
+	2. If a URI does not contain an authority component, then the path cannot begin with two slash characters ('//'), e.g., [ '/' path ]"
+
+	uri path:
+		((self match: $/)
+			ifTrue: [	"At least one slash, so look for presence of authority."
+				(self match: $/)
+					ifFalse: [ "Single slash indicates an absolute path."
+						self readAbsolutePath ]
+					ifTrue: [	"Two slashes introduces an authority."
+						self parseAuthority.
+						"Look again for the path following the authority."
+						(self match: $/)
+							ifTrue: [	"A single slash again indicates an absolute path."
+								self readAbsolutePath ]
+							ifFalse: [	"There is no syntax for a relative path following an authority."
+									"By rule #1 above, the path must be empty."
+								nil ]]]
+			ifFalse: [	"No slash, so path is either empty or relative."
+				self isPathCharacter
+					ifFalse: [	"Empty path" nil ]
+					ifTrue: [	"Relative path"
+						uri scheme
+							ifNotNil: [ self readRelativePath ]
+							ifNil: [ self readNoschemePath ] ] ])! !
+
+!URIParser methodsFor: 'private-authority' stamp: 'ess 4/3/2025 11:00:12'!
+readHost
+
+	lookahead = $[ ifTrue: [
+		^ self readIpLiteral ].
+	^ self isDigit
+		ifFalse: [ self readHostname ]
+		ifTrue: [
+			self readIPv4 ifNil: [
+				"Host started with a digit but wasn't a valid IPv4 address."
+				self readHostname ] ]! !
+
+!URIParser methodsFor: 'private-authority' stamp: 'ess 6/25/2025 06:57:30'!
+readHostname
+
+	^ self readPercentEncodingSatisfying: [ :la | self isHostnameCharacter ]! !
+
+!URIParser methodsFor: 'private-authority' stamp: 'ess 6/25/2025 07:13:15'!
+readIPv4
+
+	^ self withSaveDo: [ :restore |
+		(1 to: 4) collect: [ :each |
+			each > 1 ifTrue: [
+				(self match: $.) ifFalse: [
+					restore value.
+					^ nil ] ].
+			self readOctet ifNil: [
+				restore value.
+				^ nil ] ] ]! !
+
+!URIParser methodsFor: 'private-authority' stamp: 'ess 4/3/2025 04:51:54'!
+readIpLiteral
+
+	"Not yet implemented."
+	^ nil! !
+
+!URIParser methodsFor: 'private-authority' stamp: 'ess 6/25/2025 07:05:16'!
+readOctet
+
+	| octet |
+	self isDigit ifFalse: [
+		^ nil ].
+	octet := self consumeDigit.
+	self isDigit ifTrue: [
+		octet := octet * 10 + self consumeDigit ].
+	self isDigit ifTrue: [
+		octet := octet * 10 + self consumeDigit ].
+	^ (octet between: 0 and: 255)
+		ifTrue: [ octet ]
+		ifFalse: [ nil ]! !
+
+!URIParser methodsFor: 'private-authority' stamp: 'ess 6/25/2025 07:05:23'!
+readPort
+
+	| port |
+	self isDigit ifFalse: [
+		^ self parseError: 'Expected port number'].
+	port := 0.
+	[ self isDigit ] whileTrue: [
+		port := port * 10 + self consumeDigit ].
+	^ (port between: 0 and: 65536)
+		ifTrue: [ port ]
+		ifFalse: [ nil ]! !
+
+!URIParser methodsFor: 'private-miscellaneous' stamp: 'ess 4/3/2025 03:59:13'!
+readFragment
+
+	"Fragments accept the same characters as queries."
+	^ self readQuery! !
+
+!URIParser methodsFor: 'private-miscellaneous' stamp: 'ess 4/3/2025 10:58:19'!
+readPercentEncodingSatisfying: aUnaryBlock
+	"Collect a sequence of characters that either satisfy the given predicate or--if the predicate allows '%'--are percent encoded."
+	"Note that the percent-encoded values themselves are not required to satisfy the predicate.  That's kinda the point.  Note also that we do not decode the percent-encodings, beyond ensuring their validity, in-case of encoded sub-delimiters that may be significant later.  Decoding percent-encoded components is a higher-level responsibility."
+
+	^ String streamContents: [ :stream |
+		[ aUnaryBlock value: lookahead ] whileTrue: [
+			(lookahead == $% and: [ self isPercentEncoding ])
+				ifFalse: [
+					"Not percent-encoded, but a valid character."
+					stream nextPut: self consume ]
+				ifTrue: [
+					"Copy the percent-encoding literally, don't decode it."
+					3 timesRepeat: [
+						stream nextPut: self consume ] ] ] ]! !
+
+!URIParser methodsFor: 'private-miscellaneous' stamp: 'ess 4/3/2025 04:53:56'!
+readQuery
+
+	^ self readPercentEncodingSatisfying: [ :la | self isQueryCharacter ]! !
+
+!URIParser methodsFor: 'private-miscellaneous' stamp: 'ess 6/25/2025 07:13:22'!
+readScheme
+
+	self isSchemeStartCharacter ifFalse: [
+		"Not a scheme."
+		^ nil ].
+	^ self withSaveDo: [ :restore |
+		| scheme |
+		scheme := String streamContents: [ :stream |
+			[ self isSchemeCharacter ] whileTrue: [
+				stream nextPut: self consume ] ].
+		(self match: $:)
+			ifTrue: [ scheme ]
+			ifFalse: [
+				"If present, the scheme must be followed by a colon (':')."
+				restore value.
+				nil ] ]! !
+
+!URIParser methodsFor: 'private-path' stamp: 'ess 6/6/2025 06:38:42'!
+readAbsolutePath
+
+	| firstSegment |
+	firstSegment := self readPathSegment.
+	firstSegment isEmpty ifTrue: [
+		^ URIPath root ].
+	^ URIPath absolute: (self readPathSegmentsAfter: firstSegment)! !
+
+!URIParser methodsFor: 'private-path' stamp: 'ess 4/3/2025 04:52:09'!
+readNocolonPathSegment
+
+	| segment |
+	segment := self readPercentEncodingSatisfying: [ :la | self isNocolonPathCharacter ].
+	segment isEmpty ifTrue: [
+		^ self parseError: 'Expected non-empty path segment' ].
+	^ segment! !
+
+!URIParser methodsFor: 'private-path' stamp: 'ess 4/3/2025 04:52:15'!
+readNonemptyPathSegment
+
+	self isPathCharacter ifFalse: [
+		^ self parseError: 'Expected non-empty path segment' ].
+	^ self readPathSegment! !
+
+!URIParser methodsFor: 'private-path' stamp: 'ess 4/3/2025 04:02:54'!
+readNoschemePath
+
+	^ self readRelativePathAfter: self readNocolonPathSegment! !
+
+!URIParser methodsFor: 'private-path' stamp: 'ess 4/3/2025 04:04:05'!
+readPathSegment
+	"May be empty."
+
+	^ self readPercentEncodingSatisfying: [ :la | self isPathCharacter ]! !
+
+!URIParser methodsFor: 'private-path' stamp: 'ess 4/3/2025 04:04:24'!
+readPathSegments
+
+	| segments |
+	segments := OrderedCollection with: self readPathSegment.
+	[ self match: $/ ] whileTrue: [
+		segments add: self readPathSegment ].
+	^ segments! !
+
+!URIParser methodsFor: 'private-path' stamp: 'ess 4/3/2025 04:04:37'!
+readPathSegmentsAfter: firstSegment
+
+	| segments |
+	segments := OrderedCollection with: firstSegment.
+	(self match: $/) ifTrue: [
+		segments addAll: self readPathSegments ].
+	^ segments! !
+
+!URIParser methodsFor: 'private-path' stamp: 'ess 4/3/2025 04:04:43'!
+readRelativePath
+
+	^ self readRelativePathAfter: self readNonemptyPathSegment! !
+
+!URIParser methodsFor: 'private-path' stamp: 'ess 6/6/2025 06:38:42'!
+readRelativePathAfter: firstSegment
+
+	^ URIPath relative: (self readPathSegmentsAfter: firstSegment)! !
+
+!URIParser methodsFor: 'private-path' stamp: 'ess 6/25/2025 07:13:27'!
+readUserinfo
+
+	^ self withSaveDo: [ :restore |
+		| userinfo |
+		userinfo := self readPercentEncodingSatisfying: [ :la | self isUserinfoCharacter ].
+		(self match: $@)
+			ifTrue: [ userinfo ]
+			ifFalse: [
+				restore value.
+				nil ] ]! !
+
+!URIParser class methodsFor: 'parsing' stamp: 'ess 4/3/2025 03:47:49'!
+parse: aStringOrStream into: aUri
+
+	^ self new
+		parse: aStringOrStream
+		into: aUri! !
 
 !ByteArray methodsFor: '*URI-converting' stamp: 'ess 11/3/2024 08:49:47'!
 percentEncoded
