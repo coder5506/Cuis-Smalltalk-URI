@@ -2,7 +2,17 @@
 
 See also <https://codeberg.org/auverlot/Cuis-Smalltalk-URI>.
 
-## Construction
+## License
+
+[MIT License](LICENSE)
+
+## Dependencies
+
+- [Cuis-Smalltalk-Unicode](https://github.com/coder5506/Cuis-Smalltalk-Unicode)
+
+## Features
+
+### Construction
 
 ```smalltalk
 | uri |
@@ -18,7 +28,7 @@ uri := URI new
 uri asString "https://john:1234@www.domain.com:8080/folder/file?id=42&name=john.doe#row=1"
 ```
 
-## Parsing
+### Parsing
 
 ```smalltalk
 | uri |
@@ -33,7 +43,7 @@ uri query. "id=42&name=john.doe"
 uri fragment "row=1"
 ```
 
-## Query Dictionaries
+### Query Dictionaries
 
 ```smalltalk
 | uri query |
@@ -43,7 +53,7 @@ query at: 'id'. "42"
 query at: 'name' "john.doe"
 ```
 
-## Relative URIs
+### Relative URIs
 
 ```smalltalk
 | baseUri relativeUri targetUri |
